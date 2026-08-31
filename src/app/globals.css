@@ -1,8 +1,13 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #000000;
+  --foreground: #ededed;
+  --card-bg: rgba(9, 9, 11, 0.75);
+  --border-color: rgba(39, 39, 42, 0.8);
+  --primary: #ffffff;
+  --accent: #a1a1aa;
+  --glow-color: rgba(255, 255, 255, 0.15);
 }
 
 @theme inline {
@@ -12,15 +17,112 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  border-color: var(--border-color);
 }
 
 body {
+  background-color: var(--background) !important;
+  color: var(--foreground) !important;
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  overflow-x: hidden;
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+/* Dynamic Themed Components */
+.theme-surface {
+  background-color: var(--background) !important;
+  color: var(--foreground) !important;
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+.theme-card {
+  background-color: var(--card-bg) !important;
+  border-color: var(--border-color) !important;
+  color: var(--foreground) !important;
+  transition: background-color 0.4s ease, border-color 0.4s ease, color 0.4s ease, box-shadow 0.4s ease;
+}
+
+.theme-card:hover {
+  box-shadow: 0 10px 30px -10px var(--glow-color);
+}
+
+.theme-border {
+  border-color: var(--border-color) !important;
+  transition: border-color 0.4s ease;
+}
+
+.theme-primary-text {
+  color: var(--primary) !important;
+}
+
+.theme-accent-text {
+  color: var(--accent) !important;
+}
+
+.theme-primary-btn {
+  background-color: var(--primary) !important;
+  color: var(--background) !important;
+  box-shadow: 0 4px 20px var(--glow-color);
+  transition: all 0.3s ease;
+}
+
+.theme-primary-btn:hover {
+  filter: brightness(1.15);
+  transform: translateY(-1px);
+}
+
+.theme-secondary-btn {
+  background-color: var(--card-bg) !important;
+  border-color: var(--border-color) !important;
+  color: var(--foreground) !important;
+  transition: all 0.3s ease;
+}
+
+.theme-secondary-btn:hover {
+  border-color: var(--primary) !important;
+  color: var(--primary) !important;
+}
+
+.theme-badge {
+  background-color: color-mix(in srgb, var(--primary) 12%, transparent) !important;
+  border-color: color-mix(in srgb, var(--primary) 30%, transparent) !important;
+  color: var(--primary) !important;
+}
+
+.theme-pill {
+  background-color: color-mix(in srgb, var(--card-bg) 90%, transparent) !important;
+  border-color: var(--border-color) !important;
+  color: var(--foreground) !important;
+}
+
+@keyframes spinSlow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spinSlow 20s linear infinite;
+}
+
+/* Custom sleek scrollbar */
+::-webkit-scrollbar {
+  width: 7px;
+}
+
+::-webkit-scrollbar-track {
   background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
 }

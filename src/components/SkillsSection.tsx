@@ -313,7 +313,7 @@ export default function SkillsSection({ skills = [] }: SkillsSectionProps) {
             }}
           >
             {/* Category Chips */}
-            <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
+            <div className="flex items-center gap-2 overflow-x-auto no-scrollbar w-full md:w-auto py-1">
               {categories.map((cat) => {
                 const Icon = cat.icon;
                 const isActive = selectedCategory === cat.name;
@@ -326,7 +326,7 @@ export default function SkillsSection({ skills = [] }: SkillsSectionProps) {
                   <button
                     key={cat.name}
                     onClick={() => setSelectedCategory(cat.name)}
-                    className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-2xl text-xs font-medium transition-all cursor-pointer border"
+                    className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-2xl text-xs font-medium transition-all cursor-pointer border shrink-0"
                     style={{
                       backgroundColor: isActive ? currentTheme.primary : "transparent",
                       color: isActive ? currentTheme.background : currentTheme.foreground,

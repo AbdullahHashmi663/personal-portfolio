@@ -55,14 +55,14 @@ export default function ProjectsSection({ projects = [] }: ProjectsSectionProps)
             </div>
 
             {/* Category Tabs */}
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex items-center gap-2 overflow-x-auto no-scrollbar w-full md:w-auto py-1">
               {categories.map((cat) => {
                 const isActive = activeCategory === cat;
                 return (
                   <button
                     key={cat}
                     onClick={() => setActiveCategory(cat)}
-                    className="px-4 py-2 rounded-full text-xs font-medium transition-all cursor-pointer border"
+                    className="px-4 py-2 rounded-full text-xs font-medium transition-all cursor-pointer border shrink-0"
                     style={{
                       backgroundColor: isActive ? currentTheme.primary : currentTheme.card_bg,
                       color: isActive ? currentTheme.background : currentTheme.foreground,
@@ -94,7 +94,7 @@ export default function ProjectsSection({ projects = [] }: ProjectsSectionProps)
               >
                 <div
                   onClick={() => setSelectedProject(project)}
-                  className="w-full group cursor-pointer rounded-3xl border p-6 sm:p-7 backdrop-blur-xl transition-all duration-300 flex flex-col justify-between relative overflow-hidden"
+                  className="w-full group cursor-pointer rounded-3xl border p-5 sm:p-7 backdrop-blur-xl transition-all duration-300 flex flex-col justify-between relative overflow-hidden"
                   style={{
                     backgroundColor: currentTheme.card_bg,
                     borderColor: currentTheme.border_color,
@@ -108,12 +108,12 @@ export default function ProjectsSection({ projects = [] }: ProjectsSectionProps)
                   />
 
                   <div>
-                    {/* Category & Badge */}
-                    <div className="flex items-center justify-between mb-4">
+                    {/* Tags & Action */}
+                    <div className="flex items-center justify-between gap-2 mb-4">
                       <span
                         className="px-3 py-1 rounded-full text-[11px] font-mono border"
                         style={{
-                          backgroundColor: `color-mix(in srgb, ${currentTheme.primary} 10%, transparent)`,
+                          backgroundColor: `color-mix(in srgb, ${currentTheme.primary} 12%, transparent)`,
                           borderColor: `color-mix(in srgb, ${currentTheme.primary} 25%, transparent)`,
                           color: currentTheme.primary,
                         }}
@@ -121,21 +121,15 @@ export default function ProjectsSection({ projects = [] }: ProjectsSectionProps)
                         {project.category}
                       </span>
                       {project.featured && (
-                        <span
-                          className="flex items-center gap-1 text-[10px] font-mono px-2 py-0.5 rounded-full border"
-                          style={{
-                            backgroundColor: `color-mix(in srgb, ${currentTheme.accent} 15%, transparent)`,
-                            borderColor: `color-mix(in srgb, ${currentTheme.accent} 30%, transparent)`,
-                            color: currentTheme.accent,
-                          }}
-                        >
-                          <Sparkles className="w-3 h-3" /> Featured
+                        <span className="flex items-center gap-1 text-[10px] font-mono text-zinc-400">
+                          <Sparkles className="w-3 h-3" style={{ color: currentTheme.accent }} />
+                          <span>Featured</span>
                         </span>
                       )}
                     </div>
 
                     {/* Title & Tagline */}
-                    <h3 className="text-xl sm:text-2xl font-bold text-white group-hover:text-zinc-100 transition-colors">
+                    <h3 className="text-lg sm:text-xl font-bold group-hover:opacity-90 transition-colors" style={{ color: currentTheme.foreground }}>
                       {project.title}
                     </h3>
                     {project.tagline && (
@@ -145,78 +139,37 @@ export default function ProjectsSection({ projects = [] }: ProjectsSectionProps)
                     )}
 
                     {/* Description */}
-                    <p className="text-xs sm:text-sm text-zinc-400 mt-4 line-clamp-3 leading-relaxed">
+                    <p className="mt-3 text-xs sm:text-sm text-zinc-400 line-clamp-3 leading-relaxed">
                       {project.description}
                     </p>
                   </div>
 
-                  {/* Tech Stack Pills & Action Footer */}
-                  <div
-                    className="mt-8 pt-6 border-t flex flex-col gap-4"
-                    style={{ borderColor: currentTheme.border_color }}
-                  >
-                    <div className="flex flex-wrap gap-1.5">
-                      {project.technologies.slice(0, 5).map((tech) => (
+                  {/* Footer: Tech badges + View Link */}
+                  <div className="mt-6 pt-4 border-t flex items-center justify-between gap-2" style={{ borderColor: currentTheme.border_color }}>
+                    <div className="flex flex-wrap gap-1.5 max-w-[75%]">
+                      {project.technologies.slice(0, 3).map((t) => (
                         <span
-                          key={tech}
-                          className="px-2.5 py-1 rounded-md text-[10px] font-mono border"
+                          key={t}
+                          className="px-2 py-0.5 rounded-md text-[10px] font-mono border"
                           style={{
-                            backgroundColor: "rgba(0,0,0,0.3)",
+                            backgroundColor: currentTheme.card_bg,
                             borderColor: currentTheme.border_color,
                             color: currentTheme.foreground,
                           }}
                         >
-                          {tech}
+                          {t}
                         </span>
                       ))}
-                      {project.technologies.length > 5 && (
-                        <span
-                          className="px-2 py-1 rounded-md text-[10px] font-mono text-zinc-500 border border-white/5"
-                        >
-                          +{project.technologies.length - 5}
+                      {project.technologies.length > 3 && (
+                        <span className="px-1.5 py-0.5 text-[10px] font-mono text-zinc-500">
+                          +{project.technologies.length - 3}
                         </span>
                       )}
                     </div>
 
-                    <div className="flex items-center justify-between pt-1">
-                      <span className="text-xs font-medium text-zinc-300 group-hover:text-white flex items-center gap-1">
-                        <span>View Architecture</span>
-                        <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
-                      </span>
-
-                      <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
-                        {project.github_url && (
-                          <a
-                            href={project.github_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="w-8 h-8 rounded-full border flex items-center justify-center text-zinc-300 hover:text-white transition-all"
-                            style={{
-                              backgroundColor: currentTheme.card_bg,
-                              borderColor: currentTheme.border_color,
-                            }}
-                            aria-label="GitHub Code"
-                          >
-                            <GithubIcon className="w-3.5 h-3.5" />
-                          </a>
-                        )}
-                        {project.live_url && (
-                          <a
-                            href={project.live_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="w-8 h-8 rounded-full border flex items-center justify-center text-zinc-300 hover:text-white transition-all"
-                            style={{
-                              backgroundColor: currentTheme.card_bg,
-                              borderColor: currentTheme.border_color,
-                            }}
-                            aria-label="Live Demo"
-                          >
-                            <ExternalLink className="w-3.5 h-3.5" />
-                          </a>
-                        )}
-                      </div>
-                    </div>
+                    <span className="w-8 h-8 rounded-full border flex items-center justify-center group-hover:scale-110 transition-transform" style={{ borderColor: currentTheme.border_color }}>
+                      <ChevronRight className="w-4 h-4 text-zinc-400 group-hover:text-white" />
+                    </span>
                   </div>
                 </div>
               </ScrollReveal>
@@ -233,7 +186,7 @@ export default function ProjectsSection({ projects = [] }: ProjectsSectionProps)
           onClick={() => setSelectedProject(null)}
         >
           <div
-            className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl border p-6 sm:p-8 text-white shadow-2xl animate-in zoom-in-95 duration-200"
+            className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl border p-5 sm:p-8 text-white shadow-2xl animate-in zoom-in-95 duration-200"
             style={{
               backgroundColor: currentTheme.background,
               borderColor: currentTheme.border_color,
@@ -243,7 +196,7 @@ export default function ProjectsSection({ projects = [] }: ProjectsSectionProps)
             {/* Close Button */}
             <button
               onClick={() => setSelectedProject(null)}
-              className="absolute top-6 right-6 w-8 h-8 rounded-full border flex items-center justify-center text-zinc-400 hover:text-white transition-all cursor-pointer"
+              className="absolute top-5 right-5 sm:top-6 sm:right-6 w-8 h-8 rounded-full border flex items-center justify-center text-zinc-400 hover:text-white transition-all cursor-pointer"
               style={{
                 backgroundColor: currentTheme.card_bg,
                 borderColor: currentTheme.border_color,
@@ -263,22 +216,22 @@ export default function ProjectsSection({ projects = [] }: ProjectsSectionProps)
               {selectedProject.category}
             </span>
 
-            <h3 className="text-2xl sm:text-3xl font-bold mt-4">
+            <h3 className="text-xl sm:text-3xl font-bold mt-4 pr-8">
               {selectedProject.title}
             </h3>
 
             {selectedProject.tagline && (
-              <p className="text-sm font-mono mt-1" style={{ color: currentTheme.accent }}>
+              <p className="text-xs sm:text-sm font-mono mt-1" style={{ color: currentTheme.accent }}>
                 {selectedProject.tagline}
               </p>
             )}
 
-            <div className="mt-6 space-y-4 text-sm text-zinc-300 leading-relaxed">
+            <div className="mt-5 sm:mt-6 space-y-4 text-xs sm:text-sm text-zinc-300 leading-relaxed">
               <p>{selectedProject.description}</p>
 
               {selectedProject.architecture_details && (
                 <div
-                  className="mt-6 p-4 rounded-2xl border"
+                  className="mt-5 sm:mt-6 p-4 rounded-2xl border"
                   style={{
                     backgroundColor: currentTheme.card_bg,
                     borderColor: currentTheme.border_color,
@@ -295,7 +248,7 @@ export default function ProjectsSection({ projects = [] }: ProjectsSectionProps)
               )}
             </div>
 
-            <div className="mt-6 pt-6 border-t" style={{ borderColor: currentTheme.border_color }}>
+            <div className="mt-5 sm:mt-6 pt-5 sm:pt-6 border-t" style={{ borderColor: currentTheme.border_color }}>
               <h4 className="text-xs font-mono uppercase text-zinc-400 mb-3">
                 Technologies & Frameworks
               </h4>
@@ -303,7 +256,7 @@ export default function ProjectsSection({ projects = [] }: ProjectsSectionProps)
                 {selectedProject.technologies.map((t) => (
                   <span
                     key={t}
-                    className="px-3 py-1 rounded-lg text-xs font-mono border"
+                    className="px-2.5 py-1 rounded-lg text-xs font-mono border"
                     style={{
                       backgroundColor: currentTheme.card_bg,
                       borderColor: currentTheme.border_color,
@@ -316,13 +269,13 @@ export default function ProjectsSection({ projects = [] }: ProjectsSectionProps)
               </div>
             </div>
 
-            <div className="mt-8 flex items-center gap-3">
+            <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
               {selectedProject.github_url && (
                 <a
                   href={selectedProject.github_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1 inline-flex items-center justify-center gap-2 rounded-xl py-3 px-4 text-xs font-semibold transition-all shadow-md"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl py-3 px-4 text-xs font-semibold transition-all shadow-md text-center"
                   style={{
                     backgroundColor: currentTheme.primary,
                     color: currentTheme.background,
@@ -337,7 +290,7 @@ export default function ProjectsSection({ projects = [] }: ProjectsSectionProps)
                   href={selectedProject.live_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1 inline-flex items-center justify-center gap-2 rounded-xl border py-3 px-4 text-xs font-medium transition-all"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl border py-3 px-4 text-xs font-medium transition-all text-center"
                   style={{
                     backgroundColor: currentTheme.card_bg,
                     borderColor: currentTheme.border_color,

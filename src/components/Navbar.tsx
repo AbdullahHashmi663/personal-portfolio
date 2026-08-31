@@ -50,12 +50,12 @@ export default function Navbar({ profile }: NavbarProps) {
       className="fixed top-0 inset-x-0 z-50 w-full transition-all duration-500 backdrop-blur-xl border-b"
       style={{
         backgroundColor: isScrolled
-          ? `color-mix(in srgb, ${currentTheme.background} 90%, transparent)`
-          : `color-mix(in srgb, ${currentTheme.background} 40%, transparent)`,
+          ? `color-mix(in srgb, ${currentTheme.background} 92%, transparent)`
+          : `color-mix(in srgb, ${currentTheme.background} 50%, transparent)`,
         borderColor: isScrolled ? currentTheme.border_color : "transparent",
         boxShadow: isScrolled ? `0 10px 30px -10px ${currentTheme.glow_color}` : "none",
-        paddingTop: isScrolled ? "0.75rem" : "1rem",
-        paddingBottom: isScrolled ? "0.75rem" : "1rem",
+        paddingTop: isScrolled ? "0.6rem" : "0.85rem",
+        paddingBottom: isScrolled ? "0.6rem" : "0.85rem",
       }}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-14 flex items-center justify-between">
@@ -77,7 +77,7 @@ export default function Navbar({ profile }: NavbarProps) {
         <div className="flex md:hidden items-center gap-2">
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2 rounded-xl border text-zinc-300 hover:text-white"
+            className="p-2 rounded-xl border text-zinc-300 hover:text-white active:scale-95 transition-transform"
             style={{
               backgroundColor: currentTheme.card_bg,
               borderColor: currentTheme.border_color,
@@ -91,7 +91,7 @@ export default function Navbar({ profile }: NavbarProps) {
         {/* Center Sunburst Emblem Icon */}
         <Link href="#home" className="flex items-center justify-center hover:opacity-80 transition-opacity">
           <svg
-            className="w-7 h-7 animate-spin-slow"
+            className="w-6 h-6 sm:w-7 sm:h-7 animate-spin-slow"
             style={{ color: currentTheme.primary }}
             viewBox="0 0 24 24"
             fill="none"
@@ -111,13 +111,13 @@ export default function Navbar({ profile }: NavbarProps) {
         </Link>
 
         {/* Right Controls: Theme Selector + Social Dots + Admin Button */}
-        <div className="flex items-center gap-2.5 sm:gap-3.5">
+        <div className="flex items-center gap-2 sm:gap-3.5">
           
           {/* Theme Palette Switcher Dropdown */}
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setThemeDropdownOpen(!themeDropdownOpen)}
-              className="flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium backdrop-blur-md hover:scale-105 transition-all shadow-sm cursor-pointer"
+              className="flex items-center gap-1.5 rounded-full border px-2.5 sm:px-3 py-1.5 text-xs font-medium backdrop-blur-md hover:scale-105 active:scale-95 transition-all shadow-sm cursor-pointer"
               style={{
                 backgroundColor: currentTheme.card_bg,
                 borderColor: currentTheme.border_color,
@@ -134,7 +134,7 @@ export default function Navbar({ profile }: NavbarProps) {
             {/* Dropdown Menu */}
             {themeDropdownOpen && (
               <div
-                className="absolute right-0 mt-2.5 w-72 rounded-2xl border p-2.5 shadow-2xl z-50 animate-in fade-in zoom-in-95 duration-150 backdrop-blur-2xl"
+                className="absolute right-0 mt-2.5 w-[280px] sm:w-72 rounded-2xl border p-2.5 shadow-2xl z-50 animate-in fade-in zoom-in-95 duration-150 backdrop-blur-2xl max-w-[calc(100vw-2rem)]"
                 style={{
                   backgroundColor: currentTheme.background,
                   borderColor: currentTheme.border_color,
@@ -174,7 +174,6 @@ export default function Navbar({ profile }: NavbarProps) {
                         }}
                       >
                         <div className="flex items-center gap-2.5">
-                          {/* Palette Preview Swatch */}
                           <div className="flex items-center -space-x-1">
                             <span
                               className="w-3.5 h-3.5 rounded-full border border-black/40 shadow-sm"
@@ -207,7 +206,7 @@ export default function Navbar({ profile }: NavbarProps) {
             )}
           </div>
 
-          {/* Social Dots */}
+          {/* Social Dots (Desktop) */}
           <div className="hidden sm:flex items-center gap-1.5">
             <a
               href={profile?.linkedin_url || "https://linkedin.com/in/abdullah-bin-zubair-hashmi"}
@@ -251,7 +250,7 @@ export default function Navbar({ profile }: NavbarProps) {
           {/* Admin Portal Button */}
           <Link
             href="/admin"
-            className="flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-xs font-medium backdrop-blur-md hover:scale-105 transition-all shadow-sm"
+            className="flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium backdrop-blur-md hover:scale-105 active:scale-95 transition-all shadow-sm"
             style={{
               backgroundColor: currentTheme.card_bg,
               borderColor: currentTheme.border_color,
@@ -259,8 +258,8 @@ export default function Navbar({ profile }: NavbarProps) {
             }}
           >
             <Shield className="w-3 h-3" style={{ color: currentTheme.primary }} />
-            <span>Admin</span>
-            <span className="font-mono tracking-widest text-[11px] opacity-70">⸬</span>
+            <span className="text-[11px] sm:text-xs">Admin</span>
+            <span className="font-mono tracking-widest text-[10px] opacity-70 hidden sm:inline">⸬</span>
           </Link>
         </div>
 
@@ -275,22 +274,29 @@ export default function Navbar({ profile }: NavbarProps) {
             borderColor: currentTheme.border_color,
           }}
         >
-          {navLinks.map((link) => (
-            <Link
-              key={link.name}
-              href={link.href}
-              onClick={() => setMobileMenuOpen(false)}
-              className="text-sm font-medium text-zinc-300 hover:text-white py-1"
-            >
-              {link.name}
-            </Link>
-          ))}
-          <div className="flex items-center gap-3 pt-3 border-t" style={{ borderColor: currentTheme.border_color }}>
+          <div className="grid grid-cols-2 gap-2">
+            {navLinks.map((link) => (
+              <Link
+                key={link.name}
+                href={link.href}
+                onClick={() => setMobileMenuOpen(false)}
+                className="text-xs font-medium text-zinc-300 hover:text-white p-2.5 rounded-xl border"
+                style={{
+                  backgroundColor: currentTheme.card_bg,
+                  borderColor: currentTheme.border_color,
+                }}
+              >
+                {link.name}
+              </Link>
+            ))}
+          </div>
+
+          <div className="flex items-center justify-between gap-2 pt-3 border-t" style={{ borderColor: currentTheme.border_color }}>
             <a
               href={profile?.linkedin_url || "https://linkedin.com/in/abdullah-bin-zubair-hashmi"}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-3 py-1 rounded-full text-xs"
+              className="flex-1 text-center py-2 rounded-xl text-xs border"
               style={{
                 backgroundColor: currentTheme.card_bg,
                 borderColor: currentTheme.border_color,
@@ -302,7 +308,7 @@ export default function Navbar({ profile }: NavbarProps) {
               href={profile?.github_url || "https://github.com/abdullahhashmi"}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-3 py-1 rounded-full text-xs"
+              className="flex-1 text-center py-2 rounded-xl text-xs border"
               style={{
                 backgroundColor: currentTheme.card_bg,
                 borderColor: currentTheme.border_color,
@@ -312,7 +318,7 @@ export default function Navbar({ profile }: NavbarProps) {
             </a>
             <a
               href={`mailto:${profile?.email || "abdullahbinzubairhashmi@gmail.com"}`}
-              className="px-3 py-1 rounded-full text-xs"
+              className="flex-1 text-center py-2 rounded-xl text-xs border"
               style={{
                 backgroundColor: currentTheme.card_bg,
                 borderColor: currentTheme.border_color,

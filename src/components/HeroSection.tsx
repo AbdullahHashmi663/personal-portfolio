@@ -39,7 +39,7 @@ export default function HeroSection({ profile }: HeroSectionProps) {
       {/* ============================================================ */}
       <section
         id="home"
-        className="relative min-h-[960px] lg:min-h-screen w-full flex flex-col justify-between overflow-hidden px-4 sm:px-8 lg:px-14 pt-28 sm:pt-32 pb-14 theme-surface"
+        className="relative min-h-[90vh] lg:min-h-screen w-full flex flex-col justify-between overflow-hidden px-4 sm:px-8 lg:px-14 pt-24 sm:pt-32 pb-10 sm:pb-14 theme-surface"
         style={{ isolation: "isolate" }}
       >
         {/* Dynamic theme radial vignette & ambient background glow */}
@@ -52,40 +52,40 @@ export default function HeroSection({ profile }: HeroSectionProps) {
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/80 pointer-events-none z-[1]" />
 
         {/* --- Center / Background Portrait Layer (z-2) --- */}
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 lg:left-[51%] w-[340px] sm:w-[400px] lg:w-[460px] pointer-events-none z-[2] flex items-end justify-center">
+        <div className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 lg:left-[51%] w-[290px] sm:w-[380px] lg:w-[460px] pointer-events-none z-[2] flex items-end justify-center">
           <Image
             src="/gallery/black-me.png"
             alt={name}
             width={800}
             height={1000}
             priority
-            className="w-full h-auto object-contain select-none [mask-image:radial-gradient(ellipse_75%_70%_at_50%_45%,black_35%,rgba(0,0,0,0.75)_52%,rgba(0,0,0,0.15)_68%,transparent_82%)] [-webkit-mask-image:radial-gradient(ellipse_75%_70%_at_50%_45%,black_35%,rgba(0,0,0,0.75)_52%,rgba(0,0,0,0.15)_68%,transparent_82%)]"
+            className="w-full h-auto object-contain select-none opacity-80 sm:opacity-100 [mask-image:radial-gradient(ellipse_75%_70%_at_50%_45%,black_35%,rgba(0,0,0,0.75)_52%,rgba(0,0,0,0.15)_68%,transparent_82%)] [-webkit-mask-image:radial-gradient(ellipse_75%_70%_at_50%_45%,black_35%,rgba(0,0,0,0.75)_52%,rgba(0,0,0,0.15)_68%,transparent_82%)]"
           />
         </div>
 
         {/* --- Hero Main Content Grid (z-20) --- */}
-        <div className="relative z-20 w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-center my-auto pt-6 sm:pt-10 pb-8">
+        <div className="relative z-20 w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-center my-auto pt-4 sm:pt-8 pb-6">
           
           {/* Left Column: Heading & Description & CTAs (5 cols) */}
           <div className="lg:col-span-5 flex flex-col justify-center text-left">
             {/* Microsoft Certified & Tagline Badge */}
-            <div className="flex flex-wrap items-center gap-2 mb-4">
+            <div className="flex flex-wrap items-center gap-2 mb-3 sm:mb-4">
               <div
-                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border text-[11px] font-mono backdrop-blur-md transition-all duration-300"
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border text-[10px] sm:text-[11px] font-mono backdrop-blur-md transition-all duration-300"
                 style={{
                   backgroundColor: `color-mix(in srgb, ${currentTheme.primary} 12%, transparent)`,
                   borderColor: `color-mix(in srgb, ${currentTheme.primary} 30%, transparent)`,
                   color: currentTheme.primary,
                 }}
               >
-                <Award className="w-3.5 h-3.5" />
+                <Award className="w-3.5 h-3.5 shrink-0" />
                 <span className="font-semibold">Microsoft Certified</span>
-                <span className="opacity-80">· Power Platform Developer Associate</span>
+                <span className="opacity-80 truncate">· Power Platform Developer</span>
               </div>
             </div>
 
             {/* Big Editorial Headline */}
-            <h1 className="text-4xl sm:text-6xl xl:text-7xl font-bold tracking-tight text-white leading-[1.04]">
+            <h1 className="text-3xl sm:text-5xl md:text-6xl xl:text-7xl font-bold tracking-tight text-white leading-[1.06]">
               Building <br />
               systems that <br />
               <span
@@ -97,15 +97,15 @@ export default function HeroSection({ profile }: HeroSectionProps) {
             </h1>
 
             {/* Description from Resume */}
-            <p className="mt-6 text-xs sm:text-sm text-zinc-300 max-w-md leading-relaxed">
+            <p className="mt-4 sm:mt-6 text-xs sm:text-sm text-zinc-300 max-w-md leading-relaxed">
               Based in Islamabad & Rawalpindi. <strong className="text-white">Microsoft Certified Power Platform Developer Associate</strong> & Final-Year IT Bachelor at Bahria University (<strong className="text-white font-mono">3.85 CGPA</strong>), specializing in Next.js, C#, ASP.NET Core, C++ systems, and 2D/3D web interactive animations.
             </p>
 
             {/* Action Buttons */}
-            <div className="mt-8 flex flex-wrap items-center gap-3">
+            <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
               <Link
                 href="#projects"
-                className="inline-flex items-center justify-center rounded-full px-6 py-3 text-xs sm:text-sm font-semibold hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg cursor-pointer"
+                className="inline-flex items-center justify-center rounded-full px-6 py-3 text-xs sm:text-sm font-semibold hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg cursor-pointer text-center"
                 style={{
                   backgroundColor: currentTheme.primary,
                   color: currentTheme.background,
@@ -117,7 +117,7 @@ export default function HeroSection({ profile }: HeroSectionProps) {
               <a
                 href={resumeUrl}
                 download="Abdullah_Bin_Zubair_Hashmi_CV.pdf"
-                className="inline-flex items-center gap-2 rounded-full border px-5 py-3 text-xs sm:text-sm font-medium backdrop-blur-md hover:scale-[1.02] transition-all cursor-pointer"
+                className="inline-flex items-center justify-center gap-2 rounded-full border px-5 py-3 text-xs sm:text-sm font-medium backdrop-blur-md hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer text-center"
                 style={{
                   backgroundColor: currentTheme.card_bg,
                   borderColor: currentTheme.border_color,
@@ -130,11 +130,11 @@ export default function HeroSection({ profile }: HeroSectionProps) {
             </div>
 
             {/* Partners / Tech Stacks Logo Row */}
-            <div className="mt-12 sm:mt-16">
-              <p className="text-[10px] font-mono uppercase tracking-widest text-zinc-400 mb-3">
+            <div className="mt-8 sm:mt-14">
+              <p className="text-[10px] font-mono uppercase tracking-widest text-zinc-400 mb-2.5">
                 Core Engineering Stack
               </p>
-              <div className="flex flex-wrap items-center gap-5 sm:gap-7 text-xs font-semibold tracking-wider text-zinc-400">
+              <div className="flex flex-wrap items-center gap-3.5 sm:gap-6 text-[11px] sm:text-xs font-semibold tracking-wider text-zinc-400">
                 <span className="flex items-center gap-1 hover:text-white transition-colors cursor-default">
                   <span className="font-black" style={{ color: currentTheme.primary }}>⚛</span> Next.js & React
                 </span>
@@ -148,15 +148,14 @@ export default function HeroSection({ profile }: HeroSectionProps) {
                   <span style={{ color: currentTheme.primary }}>◈</span> PostgreSQL
                 </span>
                 <span className="flex items-center gap-1 hover:text-white transition-colors cursor-default">
-                  <span style={{ color: currentTheme.accent }}>☁</span> Three.js / WebGL
+                  <span style={{ color: currentTheme.accent }}>☁</span> Three.js
                 </span>
               </div>
             </div>
           </div>
 
-          {/* Center Column: Top Right Disciplines (4 cols) */}
-          <div className="lg:col-span-4 relative flex flex-col items-center justify-between min-h-[440px] sm:min-h-[520px] pointer-events-none">
-            {/* Top Right Discipline Specs */}
+          {/* Center Column: Disciplinary tags (Visible cleanly on large screens) */}
+          <div className="hidden lg:flex lg:col-span-4 relative flex-col items-center justify-between min-h-[520px] pointer-events-none">
             <div className="w-full text-right space-y-0.5 pointer-events-auto">
               <p className="text-[10px] font-mono text-zinc-400 uppercase tracking-widest">
                 /focus & credentials
@@ -177,7 +176,7 @@ export default function HeroSection({ profile }: HeroSectionProps) {
           </div>
 
           {/* Right Column: Floating Glass Cards (3 cols) */}
-          <div className="lg:col-span-3 flex flex-col gap-4.5 justify-center">
+          <div className="lg:col-span-3 flex flex-col gap-4 justify-center mt-4 lg:mt-0">
             
             {/* 1. Metric / Stat Bento Card */}
             <div
@@ -197,7 +196,7 @@ export default function HeroSection({ profile }: HeroSectionProps) {
                   >
                     3.85
                   </span>
-                  <span className="text-[10px] font-mono text-zinc-400 uppercase mt-2">
+                  <span className="text-[10px] font-mono text-zinc-400 uppercase mt-1.5">
                     CGPA / 4.00
                   </span>
                 </div>
@@ -210,7 +209,7 @@ export default function HeroSection({ profile }: HeroSectionProps) {
                   >
                     Lead
                   </span>
-                  <span className="text-[10px] font-mono text-zinc-400 uppercase mt-2">
+                  <span className="text-[10px] font-mono text-zinc-400 uppercase mt-1.5">
                     YOTA Dev Team
                   </span>
                 </div>
@@ -251,50 +250,52 @@ export default function HeroSection({ profile }: HeroSectionProps) {
                   </p>
                 </div>
                 <span
-                  className="p-1.5 rounded-full border text-[10px] font-mono"
-                  style={{
-                    backgroundColor: `color-mix(in srgb, ${currentTheme.primary} 15%, transparent)`,
-                    borderColor: `color-mix(in srgb, ${currentTheme.primary} 30%, transparent)`,
-                    color: currentTheme.primary,
-                  }}
-                >
-                  ⚡ Active
-                </span>
+                  className="w-2.5 h-2.5 rounded-full"
+                  style={{ backgroundColor: currentTheme.primary }}
+                />
               </div>
 
-              {/* Interactive Inquiry Input */}
-              <form onSubmit={handleEmailSubmit} className="relative mt-1">
+              <form onSubmit={handleEmailSubmit} className="flex gap-2">
                 <input
                   type="email"
-                  placeholder="your.email@company.com"
+                  placeholder="Enter email..."
                   value={emailInput}
                   onChange={(e) => setEmailInput(e.target.value)}
-                  className="w-full rounded-2xl border border-white/10 bg-black/40 px-3.5 py-2.5 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-white/40 focus:ring-1 focus:ring-white/20 transition-all pr-10"
+                  className="flex-1 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-white/40 transition-colors"
                 />
                 <button
                   type="submit"
-                  className="absolute right-1.5 top-1/2 -translate-y-1/2 w-7 h-7 rounded-xl flex items-center justify-center font-bold text-xs transition-all cursor-pointer"
+                  className="rounded-xl px-3 py-2 text-xs font-semibold hover:opacity-90 active:scale-95 transition-all cursor-pointer shrink-0"
                   style={{
                     backgroundColor: currentTheme.primary,
                     color: currentTheme.background,
                   }}
-                  aria-label="Submit Email"
                 >
-                  →
+                  {emailSent ? "Sent!" : "Send"}
                 </button>
               </form>
-
-              {emailSent && (
-                <div className="p-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-[10px] flex items-center gap-1.5 animate-in fade-in">
-                  <span>✓ Thank you! Abdullah will be in touch shortly.</span>
-                </div>
-              )}
             </div>
 
           </div>
 
         </div>
 
+        {/* --- Hero Footer Status Bar (z-20) --- */}
+        <div
+          className="relative z-20 w-full max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between pt-6 border-t gap-3 text-[10px] sm:text-xs font-mono text-zinc-400"
+          style={{ borderColor: currentTheme.border_color }}
+        >
+          <div className="flex items-center gap-3">
+            <span>ISLAMABAD // RAWALPINDI</span>
+            <span>•</span>
+            <span style={{ color: currentTheme.accent }}>BAHRIA UNIVERSITY 2026</span>
+          </div>
+
+          <div className="flex items-center gap-4 text-zinc-500">
+            <span>SCROLL FOR PROJECTS</span>
+            <span className="animate-bounce">↓</span>
+          </div>
+        </div>
       </section>
     </div>
   );

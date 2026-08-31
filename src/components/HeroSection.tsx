@@ -52,7 +52,7 @@ export default function HeroSection({ profile }: HeroSectionProps) {
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/80 pointer-events-none z-[1]" />
 
         {/* --- Desktop Center / Background Portrait Layer (z-2) --- */}
-        <div className="hidden lg:flex absolute bottom-6 left-[51%] w-[460px] pointer-events-none z-[2] items-end justify-center">
+        <div className="hidden lg:flex absolute bottom-6 left-[44%] xl:left-[55%] -translate-x-1/2 w-[430px] xl:w-[460px] pointer-events-none z-[2] items-end justify-center transition-all duration-300">
           <Image
             src="/gallery/black-me.png"
             alt={name}
@@ -65,7 +65,7 @@ export default function HeroSection({ profile }: HeroSectionProps) {
 
         {/* --- Hero Main Content Grid (z-20) --- */}
         <div className="relative z-20 w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-center my-auto pt-4 sm:pt-8 pb-6">
-          
+
           {/* Left Column: Heading & Description & CTAs (5 cols) */}
           <div className="lg:col-span-5 flex flex-col justify-center text-left">
             {/* Microsoft Certified & Tagline Badge */}
@@ -195,7 +195,7 @@ export default function HeroSection({ profile }: HeroSectionProps) {
 
           {/* Right Column: Floating Glass Cards (3 cols) */}
           <div className="lg:col-span-3 flex flex-col gap-4 justify-center mt-4 lg:mt-0">
-            
+
             {/* 1. Metric / Stat Bento Card */}
             <div
               className="rounded-3xl border p-4 sm:p-5 backdrop-blur-2xl shadow-2xl flex flex-col gap-3.5 transition-all duration-300"

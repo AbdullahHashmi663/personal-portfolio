@@ -51,15 +51,15 @@ export default function HeroSection({ profile }: HeroSectionProps) {
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/80 pointer-events-none z-[1]" />
 
-        {/* --- Center / Background Portrait Layer (z-2) --- */}
-        <div className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 lg:left-[51%] w-[290px] sm:w-[380px] lg:w-[460px] pointer-events-none z-[2] flex items-end justify-center">
+        {/* --- Desktop Center / Background Portrait Layer (z-2) --- */}
+        <div className="hidden lg:flex absolute bottom-6 left-[51%] w-[460px] pointer-events-none z-[2] items-end justify-center">
           <Image
             src="/gallery/black-me.png"
             alt={name}
             width={800}
             height={1000}
             priority
-            className="w-full h-auto object-contain select-none opacity-80 sm:opacity-100 [mask-image:radial-gradient(ellipse_75%_70%_at_50%_45%,black_35%,rgba(0,0,0,0.75)_52%,rgba(0,0,0,0.15)_68%,transparent_82%)] [-webkit-mask-image:radial-gradient(ellipse_75%_70%_at_50%_45%,black_35%,rgba(0,0,0,0.75)_52%,rgba(0,0,0,0.15)_68%,transparent_82%)]"
+            className="w-full h-auto object-contain select-none [mask-image:radial-gradient(ellipse_75%_70%_at_50%_45%,black_35%,rgba(0,0,0,0.75)_52%,rgba(0,0,0,0.15)_68%,transparent_82%)] [-webkit-mask-image:radial-gradient(ellipse_75%_70%_at_50%_45%,black_35%,rgba(0,0,0,0.75)_52%,rgba(0,0,0,0.15)_68%,transparent_82%)]"
           />
         </div>
 
@@ -96,8 +96,26 @@ export default function HeroSection({ profile }: HeroSectionProps) {
               </span>
             </h1>
 
+            {/* Mobile Portrait Display (Unobstructed, cleanly positioned between headline and bio) */}
+            <div className="flex lg:hidden justify-center items-center my-5 relative">
+              <div className="relative w-[210px] sm:w-[260px] aspect-[4/5] flex items-center justify-center">
+                <div
+                  className="absolute inset-0 blur-2xl rounded-full opacity-40"
+                  style={{ backgroundColor: currentTheme.glow_color }}
+                />
+                <Image
+                  src="/gallery/black-me.png"
+                  alt={name}
+                  width={600}
+                  height={750}
+                  priority
+                  className="w-full h-auto object-contain relative z-10 [mask-image:radial-gradient(ellipse_80%_75%_at_50%_45%,black_45%,rgba(0,0,0,0.8)_60%,rgba(0,0,0,0.2)_75%,transparent_90%)] [-webkit-mask-image:radial-gradient(ellipse_80%_75%_at_50%_45%,black_45%,rgba(0,0,0,0.8)_60%,rgba(0,0,0,0.2)_75%,transparent_90%)]"
+                />
+              </div>
+            </div>
+
             {/* Description from Resume */}
-            <p className="mt-4 sm:mt-6 text-xs sm:text-sm text-zinc-300 max-w-md leading-relaxed">
+            <p className="mt-2 sm:mt-6 text-xs sm:text-sm text-zinc-300 max-w-md leading-relaxed">
               Based in Islamabad & Rawalpindi. <strong className="text-white">Microsoft Certified Power Platform Developer Associate</strong> & Final-Year IT Bachelor at Bahria University (<strong className="text-white font-mono">3.85 CGPA</strong>), specializing in Next.js, C#, ASP.NET Core, C++ systems, and 2D/3D web interactive animations.
             </p>
 

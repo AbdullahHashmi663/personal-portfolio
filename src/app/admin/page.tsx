@@ -32,6 +32,8 @@ import {
   fetchProfile,
   fetchProjects,
   fetchSkills,
+  saveSkillInDb,
+  deleteSkillFromDb,
   fetchExperiences,
   fetchInspirationQuote,
   saveInspirationQuote,
@@ -96,10 +98,12 @@ export default function AdminPage() {
 
   const [newSkillForm, setNewSkillForm] = useState({
     name: "",
-    category: "Frontend",
-    proficiency: 90,
+    category: "Full-Stack & Enterprise Architecture",
     experience_years: "2+ yrs",
   });
+  const [editingSkill, setEditingSkill] = useState<Skill | null>(null);
+  const [skillSearchQuery, setSkillSearchQuery] = useState("");
+  const [skillDomainFilter, setSkillDomainFilter] = useState("All");
 
   const [newExpForm, setNewExpForm] = useState({
     company: "",
@@ -180,29 +184,41 @@ export default function AdminPage() {
     );
   };
 
-  // 3. Skill Actions
-  const handleAddSkill = (e: React.FormEvent) => {
+  // 3. Skill Actions (Syncs with Swiss Typographic Ledger)
+  const handleAddSkill = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newSkillForm.name) return;
+    if (!newSkillForm.name.trim()) return;
     const newSkill: Skill = {
       id: `sk-${Date.now()}`,
-      name: newSkillForm.name,
+      name: newSkillForm.name.trim(),
       category: newSkillForm.category,
-      proficiency: Number(newSkillForm.proficiency),
-      experience_years: newSkillForm.experience_years,
+      proficiency: 95,
+      experience_years: newSkillForm.experience_years || "2+ yrs",
       icon_name: null,
       featured: true,
       display_order: skills.length + 1,
       created_at: new Date().toISOString(),
     };
     setSkills([...skills, newSkill]);
-    setNewSkillForm({ name: "", category: "Frontend", proficiency: 90, experience_years: "2+ yrs" });
-    showToast("New skill competency registered!");
+    await saveSkillInDb(newSkill);
+    setNewSkillForm({ name: "", category: "Full-Stack & Enterprise Architecture", experience_years: "2+ yrs" });
+    showToast(`Added "${newSkill.name}" to skills registry!`);
   };
 
-  const handleDeleteSkill = (id: string) => {
+  const handleDeleteSkill = async (id: string) => {
+    const target = skills.find((s) => s.id === id);
     setSkills(skills.filter((s) => s.id !== id));
-    showToast("Skill deleted.");
+    await deleteSkillFromDb(id);
+    showToast(`Removed "${target?.name || "Skill"}" from registry.`);
+  };
+
+  const handleUpdateSkill = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingSkill) return;
+    setSkills(skills.map((s) => (s.id === editingSkill.id ? editingSkill : s)));
+    await saveSkillInDb(editingSkill);
+    setEditingSkill(null);
+    showToast(`Updated "${editingSkill.name}" successfully!`);
   };
 
   // 4. Experience Actions
@@ -830,81 +846,263 @@ export default function AdminPage() {
           )}
 
           {/* ========================================================= */}
-          {/* 4. SKILLS TAB */}
+          {/* 4. SKILLS TAB (SWISS TYPOGRAPHIC LEDGER CONTROLLER) */}
           {/* ========================================================= */}
           {activeTab === "skills" && (
             <div className="space-y-6">
-              <div>
-                <h2 className="text-xl font-bold text-white">Manage Skills & Stacks</h2>
-                <p className="text-xs text-zinc-400 mt-0.5">Add or adjust engineering competencies and proficiency meters.</p>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-zinc-800 pb-4">
+                <div>
+                  <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                    <Code2 className="w-5 h-5 text-emerald-400" />
+                    <span>Manage Skills & Engineering Domains</span>
+                  </h2>
+                  <p className="text-xs text-zinc-400 mt-0.5">
+                    Control the technologies displayed in the Swiss Typographic Ledger. Assigned domains and longevity reflect directly on the live portfolio.
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="px-3 py-1 rounded-full text-xs font-mono bg-zinc-900 border border-zinc-800 text-zinc-300">
+                    Total: {skills.length} Skills
+                  </span>
+                </div>
               </div>
 
-              {/* Add Skill Form */}
-              <form onSubmit={handleAddSkill} className="p-4 rounded-2xl border border-zinc-800 bg-zinc-900/40 grid grid-cols-1 sm:grid-cols-4 gap-3 items-end">
-                <div>
-                  <label className="text-xs font-mono text-zinc-400 uppercase">Skill Name</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. Next.js"
-                    value={newSkillForm.name}
-                    onChange={(e) => setNewSkillForm({ ...newSkillForm, name: e.target.value })}
-                    className="w-full mt-1 rounded-xl border border-zinc-800 bg-zinc-900 px-3 py-2 text-xs text-white focus:outline-none"
-                  />
+              {/* Add New Skill Form */}
+              <form
+                onSubmit={handleAddSkill}
+                className="p-5 rounded-2xl border border-zinc-800 bg-zinc-900/50 space-y-4"
+              >
+                <div className="text-xs font-mono font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-2">
+                  <Plus className="w-4 h-4" />
+                  <span>Register New Skill to Ledger</span>
                 </div>
-                <div>
-                  <label className="text-xs font-mono text-zinc-400 uppercase">Category</label>
-                  <select
-                    value={newSkillForm.category}
-                    onChange={(e) => setNewSkillForm({ ...newSkillForm, category: e.target.value })}
-                    className="w-full mt-1 rounded-xl border border-zinc-800 bg-zinc-900 px-3 py-2 text-xs text-white focus:outline-none"
+
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
+                  <div className="md:col-span-5">
+                    <label className="text-xs font-mono text-zinc-400 uppercase">Skill / Technology Name</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. Rust, GraphQL, Redis, Kubernetes"
+                      value={newSkillForm.name}
+                      onChange={(e) => setNewSkillForm({ ...newSkillForm, name: e.target.value })}
+                      className="w-full mt-1 rounded-xl border border-zinc-800 bg-zinc-950 px-3.5 py-2.5 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-white/40"
+                    />
+                  </div>
+
+                  <div className="md:col-span-4">
+                    <label className="text-xs font-mono text-zinc-400 uppercase">Target Domain / Category</label>
+                    <select
+                      value={newSkillForm.category}
+                      onChange={(e) => setNewSkillForm({ ...newSkillForm, category: e.target.value })}
+                      className="w-full mt-1 rounded-xl border border-zinc-800 bg-zinc-950 px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-white/40"
+                    >
+                      <option value="Systems & Algorithmic Kernel">01 / Systems & Algorithmic Kernel</option>
+                      <option value="Full-Stack & Enterprise Architecture">02 / Full-Stack & Enterprise Architecture</option>
+                      <option value="Spatial, Graphics & Client Interaction">03 / Spatial, Graphics & Client Interaction</option>
+                      <option value="Zero-Trust Data & Cloud Infrastructure">04 / Zero-Trust Data & Cloud Infrastructure</option>
+                      <option value="Frontend">Frontend (maps to 02)</option>
+                      <option value="Backend">Backend (maps to 02)</option>
+                      <option value="Systems & Core">Systems & Core (maps to 01)</option>
+                      <option value="Databases">Databases (maps to 04)</option>
+                      <option value="DevOps & Tools">DevOps & Tools (maps to 04)</option>
+                    </select>
+                  </div>
+
+                  <div className="md:col-span-3">
+                    <label className="text-xs font-mono text-zinc-400 uppercase">Production Longevity</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. 2+ yrs, 3+ yrs"
+                      value={newSkillForm.experience_years}
+                      onChange={(e) => setNewSkillForm({ ...newSkillForm, experience_years: e.target.value })}
+                      className="w-full mt-1 rounded-xl border border-zinc-800 bg-zinc-950 px-3.5 py-2.5 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-white/40"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-end pt-1">
+                  <button
+                    type="submit"
+                    className="inline-flex items-center gap-2 rounded-xl bg-white text-black py-2 px-5 text-xs font-semibold hover:bg-zinc-200 transition-all cursor-pointer shadow-md"
                   >
-                    <option value="Frontend">Frontend</option>
-                    <option value="Backend">Backend</option>
-                    <option value="Systems & Core">Systems & Core</option>
-                    <option value="Databases">Databases</option>
-                    <option value="DevOps & Tools">DevOps & Tools</option>
-                  </select>
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>Add Skill to Registry</span>
+                  </button>
                 </div>
-                <div>
-                  <label className="text-xs font-mono text-zinc-400 uppercase">Proficiency ({newSkillForm.proficiency}%)</label>
-                  <input
-                    type="range"
-                    min="50"
-                    max="100"
-                    value={newSkillForm.proficiency}
-                    onChange={(e) => setNewSkillForm({ ...newSkillForm, proficiency: Number(e.target.value) })}
-                    className="w-full mt-2"
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="rounded-xl bg-white text-black py-2.5 px-4 text-xs font-semibold hover:bg-zinc-200 transition-all cursor-pointer"
-                >
-                  Add Skill
-                </button>
               </form>
 
-              {/* Skills List */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {skills.map((skill) => (
-                  <div
-                    key={skill.id}
-                    className="p-3.5 rounded-2xl border border-zinc-800 bg-zinc-900/30 flex items-center justify-between gap-3"
-                  >
-                    <div>
-                      <h4 className="text-xs font-bold text-white">{skill.name}</h4>
-                      <p className="text-[10px] text-zinc-400 font-mono">{skill.category} · {skill.proficiency}%</p>
-                    </div>
-                    <button
-                      onClick={() => handleDeleteSkill(skill.id)}
-                      className="p-1.5 rounded-lg text-zinc-500 hover:text-red-400 hover:bg-zinc-800 transition-all cursor-pointer"
-                      aria-label="Delete skill"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                ))}
+              {/* Filter & Search Bar */}
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3 rounded-2xl border border-zinc-800 bg-zinc-900/30">
+                <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar w-full sm:w-auto">
+                  {["All", "01 / Systems", "02 / Full-Stack", "03 / Spatial", "04 / Data & Cloud"].map((tab) => {
+                    const isActive = skillDomainFilter === tab;
+                    return (
+                      <button
+                        key={tab}
+                        onClick={() => setSkillDomainFilter(tab)}
+                        className={`px-3 py-1 rounded-lg text-xs font-mono transition-all cursor-pointer ${
+                          isActive
+                            ? "bg-white text-black font-semibold"
+                            : "text-zinc-400 hover:text-white bg-zinc-800/60"
+                        }`}
+                      >
+                        {tab}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <input
+                  type="text"
+                  placeholder="Filter skills by name..."
+                  value={skillSearchQuery}
+                  onChange={(e) => setSkillSearchQuery(e.target.value)}
+                  className="w-full sm:w-60 rounded-xl border border-zinc-800 bg-zinc-950 px-3 py-1.5 text-xs text-white placeholder-zinc-500 focus:outline-none font-mono"
+                />
               </div>
+
+              {/* Skills Registry List */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {skills
+                  .filter((s) => {
+                    const matchesSearch =
+                      skillSearchQuery.trim() === "" ||
+                      s.name.toLowerCase().includes(skillSearchQuery.toLowerCase()) ||
+                      s.category.toLowerCase().includes(skillSearchQuery.toLowerCase());
+
+                    if (skillDomainFilter === "All") return matchesSearch;
+                    const cat = s.category.toLowerCase();
+                    if (skillDomainFilter.includes("01")) {
+                      return matchesSearch && (cat.includes("system") || cat.includes("core") || cat.includes("algorithm") || s.name.toLowerCase().includes("c++"));
+                    }
+                    if (skillDomainFilter.includes("02")) {
+                      return matchesSearch && (cat.includes("full-stack") || cat.includes("frontend") || cat.includes("backend") || cat.includes("enterprise") || cat.includes("client"));
+                    }
+                    if (skillDomainFilter.includes("03")) {
+                      return matchesSearch && (cat.includes("spatial") || cat.includes("3d") || cat.includes("design") || cat.includes("ui") || s.name.toLowerCase().includes("three") || s.name.toLowerCase().includes("tailwind"));
+                    }
+                    if (skillDomainFilter.includes("04")) {
+                      return matchesSearch && (cat.includes("data") || cat.includes("cloud") || cat.includes("devops") || cat.includes("database"));
+                    }
+                    return matchesSearch;
+                  })
+                  .map((skill) => (
+                    <div
+                      key={skill.id}
+                      className="p-4 rounded-2xl border border-zinc-800 bg-zinc-900/40 flex items-center justify-between gap-3 hover:border-zinc-700 transition-colors"
+                    >
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          <h4 className="text-sm font-bold text-white">{skill.name}</h4>
+                          <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-zinc-800 border border-zinc-700 text-zinc-300">
+                            {skill.experience_years || "2+ yrs"}
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-zinc-400 font-mono">
+                          {skill.category}
+                        </p>
+                      </div>
+
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <button
+                          onClick={() => setEditingSkill(skill)}
+                          className="p-2 rounded-lg bg-zinc-800 text-zinc-400 hover:text-white hover:bg-zinc-700 transition-all cursor-pointer"
+                          title="Edit skill details"
+                        >
+                          <Edit3 className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteSkill(skill.id)}
+                          className="p-2 rounded-lg bg-zinc-800 text-zinc-400 hover:text-red-400 hover:bg-zinc-700 transition-all cursor-pointer"
+                          title="Delete skill"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+
+              {/* Edit Skill Modal */}
+              {editingSkill && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
+                  <div className="relative w-full max-w-lg rounded-3xl border border-zinc-800 bg-zinc-950 p-6 text-white shadow-2xl space-y-4">
+                    <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
+                      <h3 className="text-base font-bold flex items-center gap-2">
+                        <Edit3 className="w-4 h-4 text-emerald-400" />
+                        <span>Edit Skill Competency</span>
+                      </h3>
+                      <button
+                        onClick={() => setEditingSkill(null)}
+                        className="text-zinc-400 hover:text-white text-xs"
+                      >
+                        ✕
+                      </button>
+                    </div>
+
+                    <form onSubmit={handleUpdateSkill} className="space-y-3.5">
+                      <div>
+                        <label className="text-xs font-mono text-zinc-400 uppercase">Skill Name</label>
+                        <input
+                          type="text"
+                          required
+                          value={editingSkill.name}
+                          onChange={(e) => setEditingSkill({ ...editingSkill, name: e.target.value })}
+                          className="w-full mt-1 rounded-xl border border-zinc-800 bg-zinc-900 px-3.5 py-2 text-xs text-white focus:outline-none"
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <label className="text-xs font-mono text-zinc-400 uppercase">Domain / Category</label>
+                          <select
+                            value={editingSkill.category}
+                            onChange={(e) => setEditingSkill({ ...editingSkill, category: e.target.value })}
+                            className="w-full mt-1 rounded-xl border border-zinc-800 bg-zinc-900 px-3.5 py-2 text-xs text-white focus:outline-none"
+                          >
+                            <option value="Systems & Algorithmic Kernel">01 / Systems & Algorithmic Kernel</option>
+                            <option value="Full-Stack & Enterprise Architecture">02 / Full-Stack & Enterprise Architecture</option>
+                            <option value="Spatial, Graphics & Client Interaction">03 / Spatial, Graphics & Client Interaction</option>
+                            <option value="Zero-Trust Data & Cloud Infrastructure">04 / Zero-Trust Data & Cloud Infrastructure</option>
+                            <option value="Frontend">Frontend</option>
+                            <option value="Backend">Backend</option>
+                            <option value="Systems & Core">Systems & Core</option>
+                            <option value="Databases">Databases</option>
+                            <option value="DevOps & Tools">DevOps & Tools</option>
+                          </select>
+                        </div>
+
+                        <div>
+                          <label className="text-xs font-mono text-zinc-400 uppercase">Experience Longevity</label>
+                          <input
+                            type="text"
+                            value={editingSkill.experience_years}
+                            onChange={(e) => setEditingSkill({ ...editingSkill, experience_years: e.target.value })}
+                            className="w-full mt-1 rounded-xl border border-zinc-800 bg-zinc-900 px-3.5 py-2 text-xs text-white focus:outline-none"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-end gap-2 pt-3 border-t border-zinc-800">
+                        <button
+                          type="button"
+                          onClick={() => setEditingSkill(null)}
+                          className="px-4 py-2 rounded-xl text-xs text-zinc-400 hover:text-white"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          type="submit"
+                          className="px-5 py-2 rounded-xl bg-white text-black text-xs font-semibold hover:bg-zinc-200 cursor-pointer"
+                        >
+                          Save Changes
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
@@ -1472,61 +1670,118 @@ export default function AdminPage() {
                     />
                   </div>
 
-                  {/* Color Pickers Grid */}
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
-                    <div className="p-3 rounded-2xl border border-zinc-800 bg-zinc-950/60 flex flex-col gap-2">
-                      <span className="text-[10px] font-mono text-zinc-400">Background (Canvas)</span>
+                  {/* Color Pickers Grid with Direct HEX Code Inputs */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-2">
+                    {/* 1. Background */}
+                    <div className="p-3.5 rounded-2xl border border-zinc-800 bg-zinc-950/60 flex flex-col gap-2">
+                      <span className="text-[10px] font-mono text-zinc-400 uppercase tracking-wider">Background (Canvas)</span>
                       <div className="flex items-center gap-2">
                         <input
                           type="color"
-                          value={newThemeForm.background}
+                          value={/^#([0-9A-Fa-f]{6})$/.test(newThemeForm.background) ? newThemeForm.background : "#0a0d14"}
                           onChange={(e) => setNewThemeForm({ ...newThemeForm, background: e.target.value })}
-                          className="w-7 h-7 rounded-lg cursor-pointer bg-transparent border-0"
+                          className="w-8 h-8 rounded-lg cursor-pointer bg-transparent border-0 shrink-0 p-0"
                         />
-                        <span className="text-xs font-mono text-zinc-200">{newThemeForm.background}</span>
+                        <input
+                          type="text"
+                          maxLength={7}
+                          placeholder="#0a0d14"
+                          value={newThemeForm.background}
+                          onChange={(e) => {
+                            let val = e.target.value.trim();
+                            if (val && !val.startsWith("#") && /^[0-9A-Fa-f]/.test(val)) val = `#${val}`;
+                            setNewThemeForm({ ...newThemeForm, background: val });
+                          }}
+                          className="w-full px-2.5 py-1.5 rounded-xl border border-zinc-800 bg-zinc-900 text-xs font-mono text-white placeholder-zinc-500 focus:outline-none focus:border-white/40 uppercase"
+                        />
                       </div>
                     </div>
 
-                    <div className="p-3 rounded-2xl border border-zinc-800 bg-zinc-950/60 flex flex-col gap-2">
-                      <span className="text-[10px] font-mono text-zinc-400">Primary Accent (Glow/Btns)</span>
+                    {/* 2. Primary Accent */}
+                    <div className="p-3.5 rounded-2xl border border-zinc-800 bg-zinc-950/60 flex flex-col gap-2">
+                      <span className="text-[10px] font-mono text-zinc-400 uppercase tracking-wider">Primary (Glow/Btns)</span>
                       <div className="flex items-center gap-2">
                         <input
                           type="color"
+                          value={/^#([0-9A-Fa-f]{6})$/.test(newThemeForm.primary) ? newThemeForm.primary : "#22c55e"}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            setNewThemeForm({
+                              ...newThemeForm,
+                              primary: val,
+                              glow_color: `${val}40`,
+                              border_color: `${val}4d`,
+                            });
+                          }}
+                          className="w-8 h-8 rounded-lg cursor-pointer bg-transparent border-0 shrink-0 p-0"
+                        />
+                        <input
+                          type="text"
+                          maxLength={7}
+                          placeholder="#22c55e"
                           value={newThemeForm.primary}
-                          onChange={(e) => setNewThemeForm({
-                            ...newThemeForm,
-                            primary: e.target.value,
-                            glow_color: `${e.target.value}40`
-                          })}
-                          className="w-7 h-7 rounded-lg cursor-pointer bg-transparent border-0"
+                          onChange={(e) => {
+                            let val = e.target.value.trim();
+                            if (val && !val.startsWith("#") && /^[0-9A-Fa-f]/.test(val)) val = `#${val}`;
+                            setNewThemeForm({
+                              ...newThemeForm,
+                              primary: val,
+                              glow_color: val.startsWith("#") && val.length === 7 ? `${val}40` : newThemeForm.glow_color,
+                              border_color: val.startsWith("#") && val.length === 7 ? `${val}4d` : newThemeForm.border_color,
+                            });
+                          }}
+                          className="w-full px-2.5 py-1.5 rounded-xl border border-zinc-800 bg-zinc-900 text-xs font-mono text-white placeholder-zinc-500 focus:outline-none focus:border-white/40 uppercase"
                         />
-                        <span className="text-xs font-mono text-zinc-200">{newThemeForm.primary}</span>
                       </div>
                     </div>
 
-                    <div className="p-3 rounded-2xl border border-zinc-800 bg-zinc-950/60 flex flex-col gap-2">
-                      <span className="text-[10px] font-mono text-zinc-400">Secondary Accent</span>
+                    {/* 3. Secondary Accent */}
+                    <div className="p-3.5 rounded-2xl border border-zinc-800 bg-zinc-950/60 flex flex-col gap-2">
+                      <span className="text-[10px] font-mono text-zinc-400 uppercase tracking-wider">Secondary Accent</span>
                       <div className="flex items-center gap-2">
                         <input
                           type="color"
-                          value={newThemeForm.accent}
+                          value={/^#([0-9A-Fa-f]{6})$/.test(newThemeForm.accent) ? newThemeForm.accent : "#10b981"}
                           onChange={(e) => setNewThemeForm({ ...newThemeForm, accent: e.target.value })}
-                          className="w-7 h-7 rounded-lg cursor-pointer bg-transparent border-0"
+                          className="w-8 h-8 rounded-lg cursor-pointer bg-transparent border-0 shrink-0 p-0"
                         />
-                        <span className="text-xs font-mono text-zinc-200">{newThemeForm.accent}</span>
+                        <input
+                          type="text"
+                          maxLength={7}
+                          placeholder="#10b981"
+                          value={newThemeForm.accent}
+                          onChange={(e) => {
+                            let val = e.target.value.trim();
+                            if (val && !val.startsWith("#") && /^[0-9A-Fa-f]/.test(val)) val = `#${val}`;
+                            setNewThemeForm({ ...newThemeForm, accent: val });
+                          }}
+                          className="w-full px-2.5 py-1.5 rounded-xl border border-zinc-800 bg-zinc-900 text-xs font-mono text-white placeholder-zinc-500 focus:outline-none focus:border-white/40 uppercase"
+                        />
                       </div>
                     </div>
 
-                    <div className="p-3 rounded-2xl border border-zinc-800 bg-zinc-950/60 flex flex-col gap-2">
-                      <span className="text-[10px] font-mono text-zinc-400">Foreground Text</span>
+                    {/* 4. Foreground Text */}
+                    <div className="p-3.5 rounded-2xl border border-zinc-800 bg-zinc-950/60 flex flex-col gap-2">
+                      <span className="text-[10px] font-mono text-zinc-400 uppercase tracking-wider">Foreground Text</span>
                       <div className="flex items-center gap-2">
                         <input
                           type="color"
-                          value={newThemeForm.foreground}
+                          value={/^#([0-9A-Fa-f]{6})$/.test(newThemeForm.foreground) ? newThemeForm.foreground : "#f0fdf4"}
                           onChange={(e) => setNewThemeForm({ ...newThemeForm, foreground: e.target.value })}
-                          className="w-7 h-7 rounded-lg cursor-pointer bg-transparent border-0"
+                          className="w-8 h-8 rounded-lg cursor-pointer bg-transparent border-0 shrink-0 p-0"
                         />
-                        <span className="text-xs font-mono text-zinc-200">{newThemeForm.foreground}</span>
+                        <input
+                          type="text"
+                          maxLength={7}
+                          placeholder="#f0fdf4"
+                          value={newThemeForm.foreground}
+                          onChange={(e) => {
+                            let val = e.target.value.trim();
+                            if (val && !val.startsWith("#") && /^[0-9A-Fa-f]/.test(val)) val = `#${val}`;
+                            setNewThemeForm({ ...newThemeForm, foreground: val });
+                          }}
+                          className="w-full px-2.5 py-1.5 rounded-xl border border-zinc-800 bg-zinc-900 text-xs font-mono text-white placeholder-zinc-500 focus:outline-none focus:border-white/40 uppercase"
+                        />
                       </div>
                     </div>
                   </div>

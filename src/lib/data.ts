@@ -346,6 +346,36 @@ export async function fetchSkills(): Promise<Skill[]> {
   }
 }
 
+export async function saveSkillInDb(skill: Skill): Promise<boolean> {
+  try {
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL.includes("your-project-id")) {
+      return true;
+    }
+    const supabase = createBrowserClient();
+    const { error } = await (supabase.from("skills") as any).upsert([skill]);
+    if (error) throw error;
+    return true;
+  } catch (err) {
+    console.error("Error saving skill:", err);
+    return false;
+  }
+}
+
+export async function deleteSkillFromDb(skillId: string): Promise<boolean> {
+  try {
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL.includes("your-project-id")) {
+      return true;
+    }
+    const supabase = createBrowserClient();
+    const { error } = await (supabase.from("skills") as any).delete().eq("id", skillId);
+    if (error) throw error;
+    return true;
+  } catch (err) {
+    console.error("Error deleting skill:", err);
+    return false;
+  }
+}
+
 export async function fetchExperiences(): Promise<Experience[]> {
   try {
     if (!process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL.includes("your-project-id")) {

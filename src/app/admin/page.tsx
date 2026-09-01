@@ -117,7 +117,7 @@ export default function AdminPage() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (passwordInput === "BS-it_8048@" || passwordInput === "admin" || passwordInput === "admin123") {
+    if (passwordInput === "H4fiz_8048@") {
       setIsAuthenticated(true);
       setAuthError(false);
     } else {

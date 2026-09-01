@@ -81,39 +81,39 @@ export default function InspirationQuoteSection({
             className="w-full flex justify-end"
           >
             <h2
-              className="font-black tracking-tighter uppercase text-[12vw] sm:text-[11vw] md:text-[9.5vw] lg:text-[8.5vw] xl:text-[8vw] leading-[0.84] transition-colors duration-500"
+              className="font-black tracking-tighter uppercase text-[17vw] sm:text-[15vw] lg:text-[13vw] xl:text-[12vw] leading-[0.84] transition-colors duration-500 font-sans"
               style={{ color: currentTheme.foreground }}
             >
               {line1}
             </h2>
           </motion.div>
 
-          {/* Line 2: SMART (Muted Grey / Accent) */}
+          {/* Line 2: SMART (Muted Accent) */}
           <motion.div
             style={{ x: shiftLeft }}
             className="w-full flex justify-end"
           >
             <h2
-              className="font-black tracking-tighter uppercase text-[12vw] sm:text-[11vw] md:text-[9.5vw] lg:text-[8.5vw] xl:text-[8vw] leading-[0.84] transition-colors duration-500"
+              className="font-black tracking-tighter uppercase text-[17vw] sm:text-[15vw] lg:text-[13vw] xl:text-[12vw] leading-[0.84] transition-colors duration-500 font-sans"
               style={{
                 color: currentTheme.accent,
-                opacity: 0.5,
+                opacity: 0.55,
               }}
             >
               {line2}
             </h2>
           </motion.div>
 
-          {/* Line 3: CHOICES (Muted Grey / Accent) */}
+          {/* Line 3: CHOICES (Muted Accent) */}
           <motion.div
             style={{ x: shiftRight }}
             className="w-full flex justify-end"
           >
             <h2
-              className="font-black tracking-tighter uppercase text-[12vw] sm:text-[11vw] md:text-[9.5vw] lg:text-[8.5vw] xl:text-[8vw] leading-[0.84] transition-colors duration-500"
+              className="font-black tracking-tighter uppercase text-[17vw] sm:text-[15vw] lg:text-[13vw] xl:text-[12vw] leading-[0.84] transition-colors duration-500 font-sans"
               style={{
                 color: currentTheme.accent,
-                opacity: 0.5,
+                opacity: 0.55,
               }}
             >
               {line3}
@@ -126,7 +126,7 @@ export default function InspirationQuoteSection({
             {/* Lower-Left Subtext nestled in the negative space */}
             <div className="md:col-span-6 text-left order-2 md:order-1 pb-1 sm:pb-3">
               <p
-                className="text-xs sm:text-base md:text-lg lg:text-xl font-bold leading-relaxed max-w-sm transition-colors duration-500"
+                className="text-xs sm:text-base md:text-lg lg:text-xl font-medium leading-relaxed max-w-sm transition-colors duration-500 font-sans"
                 style={{
                   color: currentTheme.accent,
                   opacity: 0.85,
@@ -139,31 +139,34 @@ export default function InspirationQuoteSection({
             {/* Right: IN YOUR + LIFE */}
             <div className="md:col-span-6 flex flex-col items-end text-right order-1 md:order-2 space-y-0.5 sm:space-y-1">
               {/* Row 4: IN YOUR */}
-              <div className="flex items-end justify-end gap-2 sm:gap-4">
+              <motion.div
+                style={{ x: shiftLeft }}
+                className="w-full flex items-baseline justify-end gap-3 sm:gap-6"
+              >
                 <span
-                  className="font-black tracking-tighter uppercase text-[12vw] sm:text-[11vw] md:text-[9.5vw] lg:text-[8.5vw] xl:text-[8vw] leading-[0.84] transition-colors duration-500"
+                  className="font-black tracking-tighter uppercase text-[17vw] sm:text-[15vw] lg:text-[13vw] xl:text-[12vw] leading-[0.84] transition-colors duration-500 font-sans"
                   style={{
                     color: currentTheme.accent,
-                    opacity: 0.5,
+                    opacity: 0.55,
                   }}
                 >
                   {line4A}
                 </span>
                 <span
-                  className="font-black tracking-tighter uppercase text-[12vw] sm:text-[11vw] md:text-[9.5vw] lg:text-[8.5vw] xl:text-[8vw] leading-[0.84] transition-colors duration-500"
+                  className="font-black tracking-tighter uppercase text-[17vw] sm:text-[15vw] lg:text-[13vw] xl:text-[12vw] leading-[0.84] transition-colors duration-500 font-sans"
                   style={{ color: currentTheme.foreground }}
                 >
                   {line4B}
                 </span>
-              </div>
+              </motion.div>
 
-              {/* Row 5: LIFE */}
+              {/* Row 5: LIFE (Bold Solid) */}
               <motion.div
-                style={{ x: shiftLeft }}
+                style={{ x: shiftRight }}
                 className="w-full flex justify-end"
               >
                 <h2
-                  className="font-black tracking-tighter uppercase text-[12vw] sm:text-[11vw] md:text-[9.5vw] lg:text-[8.5vw] xl:text-[8vw] leading-[0.84] transition-colors duration-500"
+                  className="font-black tracking-tighter uppercase text-[17vw] sm:text-[15vw] lg:text-[13vw] xl:text-[12vw] leading-[0.84] transition-colors duration-500 font-sans"
                   style={{ color: currentTheme.foreground }}
                 >
                   {line5}

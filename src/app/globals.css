@@ -13,8 +13,16 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-sans), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-paradiso: var(--font-paradiso), serif;
+  --font-bropella: var(--font-bropella), serif;
+  --font-carl-brown: var(--font-carl-brown), serif;
+  --font-narnia: var(--font-narnia), serif;
+  --font-silver-garden: var(--font-silver-garden), serif;
+  --font-ardent: var(--font-ardent), serif;
+  --font-raks: var(--font-raks), serif;
+  --font-limer: var(--font-limer), serif;
+  --font-mono: var(--font-mono), "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
 * {
@@ -24,9 +32,64 @@
 body {
   background-color: var(--background) !important;
   color: var(--foreground) !important;
-  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
   overflow-x: hidden;
   transition: background-color 0.4s ease, color 0.4s ease;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* User-Specified Creative Fonts Suite */
+.font-paradiso {
+  font-family: var(--font-paradiso), serif !important;
+  letter-spacing: -0.015em;
+}
+
+.font-bropella {
+  font-family: var(--font-bropella), serif !important;
+  letter-spacing: -0.02em;
+}
+
+.font-carl-brown {
+  font-family: var(--font-carl-brown), serif !important;
+  letter-spacing: 0.02em;
+}
+
+.font-narnia {
+  font-family: var(--font-narnia), serif !important;
+  letter-spacing: -0.015em;
+}
+
+.font-silver-garden {
+  font-family: var(--font-silver-garden), serif !important;
+  letter-spacing: -0.01em;
+}
+
+.font-silver-garden-italic {
+  font-family: var(--font-silver-garden), serif !important;
+  font-style: italic !important;
+  letter-spacing: -0.01em;
+}
+
+.font-ardent {
+  font-family: var(--font-ardent), serif !important;
+  letter-spacing: 0.03em;
+}
+
+.font-raks {
+  font-family: var(--font-raks), serif !important;
+  letter-spacing: -0.025em;
+}
+
+.font-limer {
+  font-family: var(--font-limer), serif !important;
+  letter-spacing: -0.02em;
+}
+
+.font-mono {
+  font-family: var(--font-mono), monospace !important;
+  letter-spacing: -0.01em;
 }
 
 /* Dynamic Themed Components */

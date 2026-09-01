@@ -49,7 +49,7 @@ export default function ProjectsSection({ projects = [] }: ProjectsSectionProps)
                   Featured Engineering Works
                 </span>
               </div>
-              <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white">
+              <h2 className="text-3xl sm:text-5xl md:text-6xl font-normal tracking-tight text-white font-bropella">
                 Projects & Systems
               </h2>
             </div>
@@ -62,7 +62,7 @@ export default function ProjectsSection({ projects = [] }: ProjectsSectionProps)
                   <button
                     key={cat}
                     onClick={() => setActiveCategory(cat)}
-                    className="px-4 py-2 rounded-full text-xs font-medium transition-all cursor-pointer border shrink-0"
+                    className="px-4 py-2 rounded-full text-xs font-medium transition-all cursor-pointer border shrink-0 font-tech"
                     style={{
                       backgroundColor: isActive ? currentTheme.primary : currentTheme.card_bg,
                       color: isActive ? currentTheme.background : currentTheme.foreground,
@@ -79,84 +79,75 @@ export default function ProjectsSection({ projects = [] }: ProjectsSectionProps)
           </div>
         </ScrollReveal>
 
-        {/* Projects Bento Grid */}
+        {/* Projects Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredProjects.map((project, index) => {
-            const isFirst = index === 0 && activeCategory === "All";
-            const delay = (index % 3) * 100 + 50;
-
-            return (
-              <ScrollReveal
-                key={project.id}
-                direction="up"
-                delay={delay}
-                className={`flex ${isFirst ? "md:col-span-2 lg:col-span-2" : ""}`}
+          {filteredProjects.map((project, idx) => (
+            <ScrollReveal key={project.id} direction="up" delay={idx * 60 + 100}>
+              <div
+                onClick={() => setSelectedProject(project)}
+                className="w-full group cursor-pointer rounded-3xl border p-5 sm:p-7 backdrop-blur-xl transition-all duration-300 flex flex-col justify-between relative overflow-hidden"
+                style={{
+                  backgroundColor: currentTheme.card_bg,
+                  borderColor: currentTheme.border_color,
+                  boxShadow: `0 8px 25px -10px ${currentTheme.glow_color}`,
+                }}
               >
+                {/* Subtle top edge glow on hover */}
                 <div
-                  onClick={() => setSelectedProject(project)}
-                  className="w-full group cursor-pointer rounded-3xl border p-5 sm:p-7 backdrop-blur-xl transition-all duration-300 flex flex-col justify-between relative overflow-hidden"
-                  style={{
-                    backgroundColor: currentTheme.card_bg,
-                    borderColor: currentTheme.border_color,
-                    boxShadow: `0 8px 25px -10px ${currentTheme.glow_color}`,
-                  }}
-                >
-                  {/* Subtle top edge glow on hover */}
-                  <div
-                    className="absolute top-0 inset-x-0 h-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                    style={{ background: `linear-gradient(to right, transparent, ${currentTheme.primary}, transparent)` }}
-                  />
+                  className="absolute top-0 inset-x-0 h-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                  style={{ background: `linear-gradient(to right, transparent, ${currentTheme.primary}, transparent)` }}
+                />
 
-                  <div>
-                    {/* Tags & Action */}
-                    <div className="flex items-center justify-between gap-2 mb-4">
-                      <span
-                        className="px-3 py-1 rounded-full text-[11px] font-mono border"
-                        style={{
-                          backgroundColor: `color-mix(in srgb, ${currentTheme.primary} 12%, transparent)`,
-                          borderColor: `color-mix(in srgb, ${currentTheme.primary} 25%, transparent)`,
-                          color: currentTheme.primary,
-                        }}
-                      >
-                        {project.category}
+                <div>
+                  {/* Tags & Action */}
+                  <div className="flex items-center justify-between gap-2 mb-4">
+                    <span
+                      className="px-3 py-1 rounded-full text-[11px] font-mono border"
+                      style={{
+                        backgroundColor: `color-mix(in srgb, ${currentTheme.primary} 12%, transparent)`,
+                        borderColor: `color-mix(in srgb, ${currentTheme.primary} 25%, transparent)`,
+                        color: currentTheme.primary,
+                      }}
+                    >
+                      {project.category}
+                    </span>
+                    {project.featured && (
+                      <span className="flex items-center gap-1 text-[10px] font-mono text-zinc-400">
+                        <Sparkles className="w-3 h-3" style={{ color: currentTheme.accent }} />
+                        <span>Featured</span>
                       </span>
-                      {project.featured && (
-                        <span className="flex items-center gap-1 text-[10px] font-mono text-zinc-400">
-                          <Sparkles className="w-3 h-3" style={{ color: currentTheme.accent }} />
-                          <span>Featured</span>
-                        </span>
-                      )}
-                    </div>
-
-                    {/* Title & Tagline */}
-                    <h3 className="text-lg sm:text-xl font-bold group-hover:opacity-90 transition-colors" style={{ color: currentTheme.foreground }}>
-                      {project.title}
-                    </h3>
-                    {project.tagline && (
-                      <p className="text-xs font-mono mt-1" style={{ color: currentTheme.accent }}>
-                        {project.tagline}
-                      </p>
                     )}
-
-                    {/* Description */}
-                    <p className="mt-3 text-xs sm:text-sm text-zinc-400 line-clamp-3 leading-relaxed">
-                      {project.description}
-                    </p>
                   </div>
 
-                  {/* Footer: Tech badges + View Link */}
-                  <div className="mt-6 pt-4 border-t flex items-center justify-between gap-2" style={{ borderColor: currentTheme.border_color }}>
-                    <div className="flex flex-wrap gap-1.5 max-w-[75%]">
-                      {project.technologies.slice(0, 3).map((t) => (
-                        <span
-                          key={t}
-                          className="px-2 py-0.5 rounded-md text-[10px] font-mono border"
-                          style={{
-                            backgroundColor: currentTheme.card_bg,
-                            borderColor: currentTheme.border_color,
-                            color: currentTheme.foreground,
-                          }}
-                        >
+                  {/* Title & Tagline */}
+                  <h3 className="text-lg sm:text-xl font-normal group-hover:opacity-90 transition-colors font-bropella" style={{ color: currentTheme.foreground }}>
+                    {project.title}
+                  </h3>
+                  {project.tagline && (
+                    <p className="text-xs font-mono mt-1" style={{ color: currentTheme.accent }}>
+                      {project.tagline}
+                    </p>
+                  )}
+
+                  {/* Description */}
+                  <p className="mt-3 text-xs sm:text-sm text-zinc-400 line-clamp-3 leading-relaxed font-sans">
+                    {project.description}
+                  </p>
+                </div>
+
+                {/* Footer: Tech badges + View Link */}
+                <div className="mt-6 pt-4 border-t flex items-center justify-between gap-2" style={{ borderColor: currentTheme.border_color }}>
+                  <div className="flex flex-wrap gap-1.5 max-w-[75%]">
+                    {project.technologies.slice(0, 3).map((t) => (
+                      <span
+                        key={t}
+                        className="px-2 py-0.5 rounded-md text-[10px] font-mono border"
+                        style={{
+                          backgroundColor: currentTheme.card_bg,
+                          borderColor: currentTheme.border_color,
+                          color: currentTheme.foreground,
+                        }}
+                      >
                           {t}
                         </span>
                       ))}
@@ -173,8 +164,7 @@ export default function ProjectsSection({ projects = [] }: ProjectsSectionProps)
                   </div>
                 </div>
               </ScrollReveal>
-            );
-          })}
+            ))}
         </div>
 
       </div>

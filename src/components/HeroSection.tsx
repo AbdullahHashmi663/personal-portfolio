@@ -84,12 +84,12 @@ export default function HeroSection({ profile }: HeroSectionProps) {
               </div>
             </div>
 
-            {/* Big Editorial Headline */}
-            <h1 className="text-3xl sm:text-5xl md:text-6xl xl:text-7xl font-bold tracking-tight text-white leading-[1.06]">
+            {/* Editorial Headline: Paradiso & Silver Garden Italic */}
+            <h1 className="text-3xl sm:text-5xl md:text-6xl xl:text-7xl font-normal tracking-tight text-white leading-[1.08] font-paradiso">
               Building <br />
               systems that <br />
               <span
-                className="transition-colors duration-500"
+                className="transition-colors duration-500 font-silver-garden-italic"
                 style={{ color: currentTheme.primary }}
               >
                 stand out
@@ -115,7 +115,7 @@ export default function HeroSection({ profile }: HeroSectionProps) {
             </div>
 
             {/* Description from Resume */}
-            <p className="mt-2 sm:mt-6 text-xs sm:text-sm text-zinc-300 max-w-md leading-relaxed">
+            <p className="mt-2 sm:mt-6 text-xs sm:text-sm text-zinc-300 max-w-md leading-relaxed font-sans">
               Based in Islamabad & Rawalpindi. <strong className="text-white">Microsoft Certified Power Platform Developer Associate</strong> & Final-Year IT Bachelor at Bahria University (<strong className="text-white font-mono">3.85 CGPA</strong>), specializing in Next.js, C#, ASP.NET Core, C++ systems, and 2D/3D web interactive animations.
             </p>
 

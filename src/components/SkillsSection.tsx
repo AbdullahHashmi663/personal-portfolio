@@ -374,7 +374,7 @@ export default function SkillsSection({ skills = [] }: SkillsSectionProps) {
                   // 04 — TECHNICAL SKILLS & CAPABILITIES
                 </span>
               </div>
-              <h2 className="text-4xl sm:text-6xl font-bold tracking-tight text-white">
+              <h2 className="text-4xl sm:text-6xl font-normal tracking-tight text-white font-carl-brown">
                 Skills & Engineering Domains
               </h2>
             </div>
@@ -437,7 +437,7 @@ export default function SkillsSection({ skills = [] }: SkillsSectionProps) {
                         </span>
                       </div>
 
-                      <h3 className="text-xl sm:text-2xl font-bold text-white tracking-tight leading-snug">
+                      <h3 className="text-xl sm:text-2xl font-bold text-white tracking-tight leading-snug font-tech">
                         {domain.title}
                       </h3>
 
@@ -467,7 +467,7 @@ export default function SkillsSection({ skills = [] }: SkillsSectionProps) {
                                   expandedMobileSkill === skillName ? null : skillName
                                 )
                               }
-                              className="group/skill relative inline-flex items-center gap-2 text-left cursor-pointer text-base sm:text-xl md:text-2xl font-medium transition-all duration-300 select-none py-1"
+                              className="group/skill relative inline-flex items-center gap-2 text-left cursor-pointer text-base sm:text-xl md:text-2xl font-medium transition-all duration-300 select-none py-1 font-tech"
                               style={{
                                 color: isHovered ? currentTheme.primary : "rgba(255, 255, 255, 0.85)",
                                 transform: isHovered ? "translateX(4px)" : "none",

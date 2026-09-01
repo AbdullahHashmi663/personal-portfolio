@@ -1,17 +1,93 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { ThemeProvider } from "@/context/ThemeContext";
 import GlobalPreloader from "@/components/GlobalPreloader";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+// 1. Paradiso (TAN Paradiso - Art Nouveau flared decorative display serif)
+const paradiso = localFont({
+  src: "../../public/fonts/TAN-PARADISO.ttf",
+  variable: "--font-paradiso",
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+// 2. Bropella (Bold bubbly display serif with curvy retro flair)
+const bropella = localFont({
+  src: "../../public/fonts/Bropella.ttf",
+  variable: "--font-bropella",
+  display: "swap",
+});
+
+// 3. Carl Brown (Modern vintage luxury hairline serif)
+const carlBrown = localFont({
+  src: "../../public/fonts/CarlBrown.ttf",
+  variable: "--font-carl-brown",
+  display: "swap",
+});
+
+// 4. Narnia (Groovy, bubbly playful display font)
+const narnia = localFont({
+  src: "../../public/fonts/Narnia.otf",
+  variable: "--font-narnia",
+  display: "swap",
+});
+
+// 5. Silver Garden (Nostalgic chic serif duo with ligatures & italics)
+const silverGarden = localFont({
+  src: [
+    { path: "../../public/fonts/Silver Garden.otf", weight: "400", style: "normal" },
+    { path: "../../public/fonts/Silver Garden Italic.otf", weight: "400", style: "italic" },
+    { path: "../../public/fonts/Silver Garden Bold.otf", weight: "700", style: "normal" },
+    { path: "../../public/fonts/Silver Garden Bold Italic.otf", weight: "700", style: "italic" },
+  ],
+  variable: "--font-silver-garden",
+  display: "swap",
+});
+
+// 6. Ardent (Contemporary stencil/ligature display serif)
+const ardent = localFont({
+  src: "../../public/fonts/ardent-regular.otf",
+  variable: "--font-ardent",
+  display: "swap",
+});
+
+// 7. Raks (Bold curvy dramatic high-contrast display serif)
+const raks = localFont({
+  src: [
+    { path: "../../public/fonts/Fraunces-900-normal.woff2", weight: "900", style: "normal" },
+    { path: "../../public/fonts/Fraunces-700-italic.woff2", weight: "700", style: "italic" },
+  ],
+  variable: "--font-raks",
+  display: "swap",
+});
+
+// 8. Limer (Groovy retro chunky display serif)
+const limer = localFont({
+  src: [{ path: "../../public/fonts/Caprasimo-400-normal.woff2", weight: "400", style: "normal" }],
+  variable: "--font-limer",
+  display: "swap",
+});
+
+// Clean body font & Developer monospace
+const plusJakartaSans = localFont({
+  src: [
+    { path: "../../public/fonts/PlusJakartaSans-400-normal.woff2", weight: "400", style: "normal" },
+    { path: "../../public/fonts/PlusJakartaSans-500-normal.woff2", weight: "500", style: "normal" },
+    { path: "../../public/fonts/PlusJakartaSans-600-normal.woff2", weight: "600", style: "normal" },
+    { path: "../../public/fonts/PlusJakartaSans-700-normal.woff2", weight: "700", style: "normal" },
+  ],
+  variable: "--font-sans",
+  display: "swap",
+});
+
+const jetbrainsMono = localFont({
+  src: [
+    { path: "../../public/fonts/JetBrainsMono-400-normal.woff2", weight: "400", style: "normal" },
+    { path: "../../public/fonts/JetBrainsMono-600-normal.woff2", weight: "600", style: "normal" },
+    { path: "../../public/fonts/JetBrainsMono-700-normal.woff2", weight: "700", style: "normal" },
+  ],
+  variable: "--font-mono",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -41,7 +117,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} dark h-full antialiased scroll-smooth`}
+      className={`${paradiso.variable} ${bropella.variable} ${carlBrown.variable} ${narnia.variable} ${silverGarden.variable} ${ardent.variable} ${raks.variable} ${limer.variable} ${plusJakartaSans.variable} ${jetbrainsMono.variable} dark h-full antialiased scroll-smooth`}
     >
       <head>
         {/* Zero-FOUT Immediate Theme Token Cache Hydration Script */}

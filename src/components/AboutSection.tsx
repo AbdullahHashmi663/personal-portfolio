@@ -41,7 +41,7 @@ export default function AboutSection({ profile, certifications = [] }: AboutSect
                   Biography & Academic Excellence
                 </span>
               </div>
-              <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white">
+              <h2 className="text-3xl sm:text-5xl font-normal tracking-tight text-white font-ardent">
                 About & Credentials
               </h2>
             </div>

@@ -73,11 +73,11 @@ export default function ContactSection({ profile }: ContactSectionProps) {
                   Let's Build Something Exceptional
                 </span>
               </div>
-              <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white">
+              <h2 className="text-3xl sm:text-5xl font-normal tracking-tight text-white font-narnia">
                 Get in Touch
               </h2>
             </div>
-            <p className="text-xs sm:text-sm text-zinc-400 max-w-md leading-relaxed">
+            <p className="text-xs sm:text-sm text-zinc-400 max-w-md leading-relaxed font-sans">
               Open for full-time software engineering roles, research collaborations, and innovative product builds.
             </p>
           </div>

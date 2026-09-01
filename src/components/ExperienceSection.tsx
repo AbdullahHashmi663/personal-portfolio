@@ -33,11 +33,11 @@ export default function ExperienceSection({ experiences = [] }: ExperienceSectio
                   Leadership & Industry Journey
                 </span>
               </div>
-              <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white">
+              <h2 className="text-3xl sm:text-5xl font-normal tracking-tight text-white font-raks">
                 Work Experience
               </h2>
             </div>
-            <p className="text-xs sm:text-sm text-zinc-400 max-w-md leading-relaxed">
+            <p className="text-xs sm:text-sm text-zinc-400 max-w-md leading-relaxed font-sans">
               Proven track record leading software development teams, organizing competitive programming events, and engineering enterprise applications.
             </p>
           </div>
@@ -77,7 +77,7 @@ export default function ExperienceSection({ experiences = [] }: ExperienceSectio
                       style={{ borderColor: currentTheme.border_color }}
                     >
                       <div>
-                        <h3 className="text-xl font-bold text-white">{exp.role}</h3>
+                        <h3 className="text-xl font-bold text-white font-tech">{exp.role}</h3>
                         <p className="text-sm font-medium mt-0.5" style={{ color: currentTheme.primary }}>
                           {exp.company}
                         </p>

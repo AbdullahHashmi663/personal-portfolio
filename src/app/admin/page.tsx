@@ -48,6 +48,8 @@ export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [passwordInput, setPasswordInput] = useState("");
   const [authError, setAuthError] = useState(false);
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
+  const [isCheckingSession, setIsCheckingSession] = useState(true);
 
   // Tab state
   const [activeTab, setActiveTab] = useState<"overview" | "profile" | "projects" | "skills" | "experience" | "quotes" | "themes" | "messages">("overview");
@@ -64,23 +66,48 @@ export default function AdminPage() {
       name: "Dr. Hamza Tariq",
       email: "hamza.tariq@example.com",
       subject: "Research Collaboration on IoT XDR",
-      message: "Hello Abdullah, I came across your Sentinel Industrial IoT framework and would love to discuss a potential research paper collaboration.",
+      message: "Impressive work on the Autonomous XDR Framework. We are reviewing your thesis abstract for presentation.",
       read: false,
-      created_at: new Date().toISOString(),
+      created_at: new Date(Date.now() - 3600000 * 4).toISOString(),
     },
     {
       id: "msg-2",
-      name: "Sarah Jenkins (Tech Recruiter)",
-      email: "sarah.j@enterprise-tech.io",
-      subject: "Senior Full-Stack Developer Opportunity",
-      message: "Hi Abdullah, loved your portfolio and ASP.NET / Next.js engineering background. Are you open for full-stack opportunities?",
+      name: "Sarah Jenkins",
+      email: "sarah.j@enterprise-tech.co",
+      subject: "Senior Full-Stack / C++ Engineering Role",
+      message: "Hi Abdullah, loved your portfolio and your work on Smart-MediDB. Are you open to discuss full-time positions?",
       read: true,
-      created_at: new Date(Date.now() - 86400000).toISOString(),
-    },
+      created_at: new Date(Date.now() - 3600000 * 28).toISOString(),
+    }
   ]);
 
-  // Modals & form state
+  // UI state
+  const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState<string | null>(null);
+
+  // Check persistent session on mount
+  useEffect(() => {
+    let isMounted = true;
+    async function checkSession() {
+      try {
+        const res = await fetch("/api/admin/session");
+        const data = await res.json();
+        if (isMounted && data.authenticated) {
+          setIsAuthenticated(true);
+        }
+      } catch {
+        // Fall back to login prompt
+      } finally {
+        if (isMounted) setIsCheckingSession(false);
+      }
+    }
+    checkSession();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  // Modals & form state
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [isNewProjectModalOpen, setIsNewProjectModalOpen] = useState(false);
   const [newProjectForm, setNewProjectForm] = useState({
@@ -115,14 +142,42 @@ export default function AdminPage() {
     technologies: "",
   });
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (passwordInput === "H4fiz_8048@") {
-      setIsAuthenticated(true);
-      setAuthError(false);
-    } else {
+    if (!passwordInput.trim()) return;
+
+    setIsAuthenticating(true);
+    setAuthError(false);
+
+    try {
+      const res = await fetch("/api/admin/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password: passwordInput }),
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setIsAuthenticated(true);
+        setAuthError(false);
+        setPasswordInput("");
+      } else {
+        setAuthError(true);
+      }
+    } catch {
       setAuthError(true);
+    } finally {
+      setIsAuthenticating(false);
     }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/admin/session", { method: "DELETE" });
+    } catch {
+      // ignore
+    }
+    setIsAuthenticated(false);
   };
 
   const showToast = (msg: string) => {
@@ -392,9 +447,17 @@ export default function AdminPage() {
 
             <button
               type="submit"
-              className="mt-2 w-full rounded-2xl bg-white text-black font-semibold text-xs py-3.5 hover:bg-zinc-200 transition-all cursor-pointer shadow-lg"
+              disabled={isAuthenticating}
+              className="mt-2 w-full rounded-2xl bg-white text-black font-semibold text-xs py-3.5 hover:bg-zinc-200 transition-all cursor-pointer shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
-              Authenticate & Enter CMS
+              {isAuthenticating ? (
+                <>
+                  <span className="w-3.5 h-3.5 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                  <span>Verifying with Supabase...</span>
+                </>
+              ) : (
+                <span>Authenticate & Enter CMS</span>
+              )}
             </button>
           </form>
 
@@ -449,7 +512,7 @@ export default function AdminPage() {
             <ExternalLink className="w-3 h-3 text-zinc-500" />
           </Link>
           <button
-            onClick={() => setIsAuthenticated(false)}
+            onClick={handleLogout}
             className="px-3 py-1.5 rounded-full bg-zinc-800 hover:bg-zinc-700 text-xs text-zinc-300 transition-all cursor-pointer"
           >
             Lock Session

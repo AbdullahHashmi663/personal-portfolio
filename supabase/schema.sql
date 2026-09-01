@@ -569,4 +569,39 @@ ON CONFLICT (id) DO UPDATE SET
   is_active = EXCLUDED.is_active,
   updated_at = timezone('utc'::text, now());
 
+-- ==============================================================================
+-- 8. ADMIN AUTHENTICATION TABLE (Cryptographic Hashed Storage)
+-- ==============================================================================
+CREATE TABLE IF NOT EXISTS public.admin_auth (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  username TEXT UNIQUE NOT NULL DEFAULT 'admin',
+  password_hash TEXT NOT NULL,
+  salt TEXT NOT NULL,
+  algorithm TEXT NOT NULL DEFAULT 'pbkdf2_sha512',
+  iterations INTEGER NOT NULL DEFAULT 100000,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- Enable Row Level Security (Service Role only / Server API access)
+ALTER TABLE public.admin_auth ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow server client to verify admin credentials" ON public.admin_auth FOR ALL USING (true);
+
+-- Seed Initial Hashed Credential for H4fiz_8048@ (Never plaintext)
+-- Salt: fa0cfe8616c63888ea5f9c4e39b49c42
+-- Hash: 9e3727114008f7e877223d8f5acd3e58fd8c95895bde60d431a3dfeb258cf7a966053a7fcd08fdb5c72b2762f52723fbc360dbd47ad862509cce47bf6a1d7511
+INSERT INTO public.admin_auth (username, password_hash, salt, algorithm, iterations)
+VALUES (
+  'admin',
+  '9e3727114008f7e877223d8f5acd3e58fd8c95895bde60d431a3dfeb258cf7a966053a7fcd08fdb5c72b2762f52723fbc360dbd47ad862509cce47bf6a1d7511',
+  'fa0cfe8616c63888ea5f9c4e39b49c42',
+  'pbkdf2_sha512',
+  100000
+)
+ON CONFLICT (username) DO UPDATE SET
+  password_hash = EXCLUDED.password_hash,
+  salt = EXCLUDED.salt,
+  algorithm = EXCLUDED.algorithm,
+  iterations = EXCLUDED.iterations,
+  updated_at = timezone('utc'::text, now());
+
 

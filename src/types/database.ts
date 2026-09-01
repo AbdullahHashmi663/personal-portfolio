@@ -304,6 +304,35 @@ export interface Database {
         Insert: Theme;
         Update: Partial<Theme>;
       };
+      admin_auth: {
+        Row: {
+          id: string;
+          username: string;
+          password_hash: string;
+          salt: string;
+          algorithm: string;
+          iterations: number;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          username: string;
+          password_hash: string;
+          salt: string;
+          algorithm?: string;
+          iterations?: number;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          username?: string;
+          password_hash?: string;
+          salt?: string;
+          algorithm?: string;
+          iterations?: number;
+          updated_at?: string;
+        };
+      };
     };
   };
 }

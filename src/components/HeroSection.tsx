@@ -52,19 +52,19 @@ export default function HeroSection({ profile }: HeroSectionProps) {
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/80 pointer-events-none z-[1]" />
 
         {/* --- Desktop Center / Background Portrait Layer (z-2) --- */}
-        <div className="hidden lg:flex absolute bottom-6 left-[44%] xl:left-[55%] -translate-x-1/2 w-[430px] xl:w-[460px] pointer-events-none z-[2] items-end justify-center transition-all duration-300">
+        <div className="hidden lg:flex absolute bottom-0 lg:left-[54%] xl:left-[56%] 2xl:left-[57%] -translate-x-1/2 w-[350px] lg:w-[380px] xl:w-[440px] 2xl:w-[480px] pointer-events-none z-[2] items-end justify-center transition-all duration-300">
           <Image
             src="/gallery/black-me.png"
             alt={name}
             width={800}
             height={1000}
             priority
-            className="w-full h-auto object-contain select-none [mask-image:radial-gradient(ellipse_75%_70%_at_50%_45%,black_35%,rgba(0,0,0,0.75)_52%,rgba(0,0,0,0.15)_68%,transparent_82%)] [-webkit-mask-image:radial-gradient(ellipse_75%_70%_at_50%_45%,black_35%,rgba(0,0,0,0.75)_52%,rgba(0,0,0,0.15)_68%,transparent_82%)]"
+            className="w-full h-auto object-contain select-none [mask-image:linear-gradient(to_bottom,black_82%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_bottom,black_82%,transparent_100%)]"
           />
         </div>
 
         {/* --- Hero Main Content Grid (z-20) --- */}
-        <div className="relative z-20 w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-center my-auto pt-4 sm:pt-8 pb-6">
+        <div className="relative z-20 w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center my-auto pt-6 sm:pt-10 pb-6">
 
           {/* Left Column: Heading & Description & CTAs (5 cols) */}
           <div className="lg:col-span-5 flex flex-col justify-center text-left">
@@ -96,11 +96,11 @@ export default function HeroSection({ profile }: HeroSectionProps) {
               </span>
             </h1>
 
-            {/* Mobile Portrait Display (Unobstructed, cleanly positioned between headline and bio) */}
-            <div className="flex lg:hidden justify-center items-center my-5 relative">
-              <div className="relative w-[210px] sm:w-[260px] aspect-[4/5] flex items-center justify-center">
+            {/* Mobile / Tablet Portrait Display (Cleanly positioned between headline and bio) */}
+            <div className="flex lg:hidden justify-center items-center my-6 relative">
+              <div className="relative w-[220px] sm:w-[280px] md:w-[320px] aspect-[4/5] flex items-center justify-center">
                 <div
-                  className="absolute inset-0 blur-2xl rounded-full opacity-40"
+                  className="absolute inset-0 blur-2xl rounded-full opacity-40 pointer-events-none"
                   style={{ backgroundColor: currentTheme.glow_color }}
                 />
                 <Image
@@ -109,7 +109,7 @@ export default function HeroSection({ profile }: HeroSectionProps) {
                   width={600}
                   height={750}
                   priority
-                  className="w-full h-auto object-contain relative z-10 [mask-image:radial-gradient(ellipse_80%_75%_at_50%_45%,black_45%,rgba(0,0,0,0.8)_60%,rgba(0,0,0,0.2)_75%,transparent_90%)] [-webkit-mask-image:radial-gradient(ellipse_80%_75%_at_50%_45%,black_45%,rgba(0,0,0,0.8)_60%,rgba(0,0,0,0.2)_75%,transparent_90%)]"
+                  className="w-full h-auto object-contain relative z-10 select-none [mask-image:linear-gradient(to_bottom,black_85%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_bottom,black_85%,transparent_100%)]"
                 />
               </div>
             </div>
@@ -172,9 +172,9 @@ export default function HeroSection({ profile }: HeroSectionProps) {
             </div>
           </div>
 
-          {/* Center Column: Disciplinary tags (Visible cleanly on large screens) */}
-          <div className="hidden lg:flex lg:col-span-4 relative flex-col items-center justify-between min-h-[520px] pointer-events-none">
-            <div className="w-full text-right space-y-0.5 pointer-events-auto">
+          {/* Center Column: Disciplinary tags (Positioned with proper breathing room below navbar) */}
+          <div className="hidden lg:flex lg:col-span-4 relative flex-col items-center justify-between min-h-[480px] xl:min-h-[530px] pointer-events-none">
+            <div className="w-full text-right space-y-1 pointer-events-auto pt-8 xl:pt-14 pr-2">
               <p className="text-[10px] font-mono text-zinc-400 uppercase tracking-widest">
                 /focus & credentials
               </p>

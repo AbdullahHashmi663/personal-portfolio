@@ -22,6 +22,7 @@ import {
   ExternalLink,
   Palette,
   Quote,
+  AlertCircle,
 } from "lucide-react";
 import {
   fallbackProfile,
@@ -515,6 +516,7 @@ export default function AdminPage() {
 
   const handleQuoteSave = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSaving(true);
     try {
       const res = await fetch("/api/admin/data", {
         method: "POST",
@@ -522,13 +524,16 @@ export default function AdminPage() {
         body: JSON.stringify({ action: "update_quote", payload: quote }),
       });
       const data = await res.json();
-      if (data.success) {
+      if (res.ok && data.success) {
         showToast("Inspiration quote published to website Swiss poster!");
       } else {
-        showToast("Failed to save quote.");
+        showToast(data?.error ? `Failed to save quote: ${data.error}` : "Failed to save quote.");
       }
-    } catch {
+    } catch (err: any) {
+      console.error("Quote save error:", err);
       showToast("Quote saved locally.");
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -611,8 +616,16 @@ export default function AdminPage() {
       
       {/* Toast Notification */}
       {saveSuccess && (
-        <div className="fixed top-6 right-6 z-50 rounded-2xl border border-emerald-500/30 bg-emerald-500/20 px-5 py-3 text-xs font-mono text-emerald-300 shadow-2xl backdrop-blur-xl animate-in fade-in slide-in-from-top-3 duration-200 flex items-center gap-2">
-          <Check className="w-3.5 h-3.5" />
+        <div className={`fixed top-6 right-6 z-50 rounded-2xl border px-5 py-3 text-xs font-mono shadow-2xl backdrop-blur-xl animate-in fade-in slide-in-from-top-3 duration-200 flex items-center gap-2 ${
+          saveSuccess.toLowerCase().includes("fail") || saveSuccess.toLowerCase().includes("error")
+            ? "border-red-500/30 bg-red-500/20 text-red-300"
+            : "border-emerald-500/30 bg-emerald-500/20 text-emerald-300"
+        }`}>
+          {saveSuccess.toLowerCase().includes("fail") || saveSuccess.toLowerCase().includes("error") ? (
+            <AlertCircle className="w-3.5 h-3.5" />
+          ) : (
+            <Check className="w-3.5 h-3.5" />
+          )}
           <span>{saveSuccess}</span>
         </div>
       )}

@@ -103,12 +103,16 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ success: false, error: `Unknown action: ${action}` }, { status: 400 });
     }
 
-    // Instantly invalidate server cache for home page so changes go live immediately
-    revalidatePath("/");
+    // Invalidate server cache for home page so changes go live immediately
+    try {
+      revalidatePath("/");
+    } catch (revalErr) {
+      console.warn("revalidatePath skipped in dev:", revalErr);
+    }
 
     return NextResponse.json({ success: true, data: result });
   } catch (err: any) {
     console.error("Admin data API error:", err);
-    return NextResponse.json({ success: false, error: err.message }, { status: 500 });
+    return NextResponse.json({ success: false, error: err?.message || "Internal server error" }, { status: 500 });
   }
 }

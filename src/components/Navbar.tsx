@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Shield, Menu, X, Palette, Check } from "lucide-react";
 import { Profile } from "@/types/database";
 import { useTheme } from "@/context/ThemeContext";
@@ -88,26 +89,35 @@ export default function Navbar({ profile }: NavbarProps) {
           </button>
         </div>
 
-        {/* Center Sunburst Emblem Icon */}
-        <Link href="#home" className="flex items-center justify-center hover:opacity-80 transition-opacity">
-          <svg
-            className="w-6 h-6 sm:w-7 sm:h-7 animate-spin-slow"
-            style={{ color: currentTheme.primary }}
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.75"
-            strokeLinecap="round"
+        {/* Center Brand Logo Emblem */}
+        <Link
+          href="#home"
+          className="group relative flex items-center justify-center hover:opacity-95 transition-opacity"
+          aria-label="Home - Abdullah Bin Zubair Hashmi"
+        >
+          {/* Subtle Ambient Glow Ring */}
+          <div
+            className="absolute -inset-1 rounded-full blur-md opacity-40 group-hover:opacity-85 transition-opacity duration-300 pointer-events-none"
+            style={{ backgroundColor: currentTheme.glow_color }}
+          />
+
+          <div
+            className="relative w-8 h-8 sm:w-9 sm:h-9 rounded-full overflow-hidden border p-[2px] transition-all duration-300 group-hover:scale-110 group-active:scale-95 shadow-sm"
+            style={{
+              backgroundColor: currentTheme.card_bg,
+              borderColor: currentTheme.border_color,
+              boxShadow: `0 0 16px -2px ${currentTheme.glow_color}`,
+            }}
           >
-            <line x1="12" y1="2" x2="12" y2="6" />
-            <line x1="12" y1="18" x2="12" y2="22" />
-            <line x1="4.93" y1="4.93" x2="7.76" y2="7.76" />
-            <line x1="16.24" y1="16.24" x2="19.07" y2="19.07" />
-            <line x1="2" y1="12" x2="6" y2="12" />
-            <line x1="18" y1="12" x2="22" y2="12" />
-            <line x1="4.93" y1="19.07" x2="7.76" y2="16.24" />
-            <line x1="16.24" y1="7.76" x2="19.07" y2="4.93" />
-          </svg>
+            <Image
+              src="/gallery/logo.png"
+              alt="Abdullah Bin Zubair Hashmi Logo"
+              width={36}
+              height={36}
+              className="w-full h-full object-cover rounded-full select-none"
+              priority
+            />
+          </div>
         </Link>
 
         {/* Right Controls: Theme Selector + Social Dots + Admin Button */}
@@ -274,6 +284,32 @@ export default function Navbar({ profile }: NavbarProps) {
             borderColor: currentTheme.border_color,
           }}
         >
+          {/* Mobile Brand Header with Logo */}
+          <div className="flex items-center gap-3 pb-3 border-b" style={{ borderColor: currentTheme.border_color }}>
+            <div
+              className="w-10 h-10 rounded-full overflow-hidden border p-[2px] flex-shrink-0"
+              style={{
+                backgroundColor: currentTheme.card_bg,
+                borderColor: currentTheme.border_color,
+                boxShadow: `0 0 12px -2px ${currentTheme.glow_color}`,
+              }}
+            >
+              <Image
+                src="/gallery/logo.png"
+                alt="Abdullah Logo"
+                width={40}
+                height={40}
+                className="w-full h-full object-cover rounded-full"
+              />
+            </div>
+            <div>
+              <p className="text-xs font-bold text-white leading-tight">Abdullah Bin Zubair Hashmi</p>
+              <p className="text-[10px] font-mono mt-0.5" style={{ color: currentTheme.accent }}>
+                Full-Stack & Systems Engineer
+              </p>
+            </div>
+          </div>
+
           <div className="grid grid-cols-2 gap-2">
             {navLinks.map((link) => (
               <Link

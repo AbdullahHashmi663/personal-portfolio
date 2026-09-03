@@ -107,6 +107,14 @@ export const metadata: Metadata = {
     "Autonomous XDR",
     "Bahria University",
   ],
+  icons: {
+    icon: [
+      { url: "/gallery/logo.png?v=2", sizes: "any" },
+      { url: "/gallery/logo.png?v=2", type: "image/png" },
+    ],
+    shortcut: "/gallery/logo.png?v=2",
+    apple: "/gallery/logo.png?v=2",
+  },
 };
 
 export default function RootLayout({
@@ -120,6 +128,9 @@ export default function RootLayout({
       className={`${paradiso.variable} ${bropella.variable} ${carlBrown.variable} ${narnia.variable} ${silverGarden.variable} ${ardent.variable} ${raks.variable} ${limer.variable} ${plusJakartaSans.variable} ${jetbrainsMono.variable} dark h-full antialiased scroll-smooth`}
     >
       <head>
+        <link rel="icon" href="/gallery/logo.png?v=2" type="image/png" />
+        <link rel="shortcut icon" href="/gallery/logo.png?v=2" type="image/png" />
+        <link rel="apple-touch-icon" href="/gallery/logo.png?v=2" />
         {/* Zero-FOUT Immediate Theme Token Cache Hydration Script */}
         <script
           dangerouslySetInnerHTML={{

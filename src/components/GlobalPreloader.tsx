@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { motion, AnimatePresence } from "motion/react";
 import { useTheme } from "@/context/ThemeContext";
 
@@ -95,38 +96,40 @@ export default function GlobalPreloader() {
           {/* Center Brand Identity & Emblem */}
           <div className="relative z-10 flex flex-col items-center text-center max-w-lg space-y-6">
             
-            {/* Spinning Geometric Sunburst Emblem */}
+            {/* Glowing Brand Logo Emblem */}
             <div className="relative flex items-center justify-center">
+              {/* Outer Cybernetic Orbital Ring */}
               <motion.div
                 animate={{ rotate: 360 }}
-                transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
-                className="w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center"
-              >
-                <svg
-                  className="w-full h-full"
-                  style={{ color: currentTheme.primary }}
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                >
-                  <line x1="12" y1="2" x2="12" y2="6" />
-                  <line x1="12" y1="18" x2="12" y2="22" />
-                  <line x1="4.93" y1="4.93" x2="7.76" y2="7.76" />
-                  <line x1="16.24" y1="16.24" x2="19.07" y2="19.07" />
-                  <line x1="2" y1="12" x2="6" y2="12" />
-                  <line x1="18" y1="12" x2="22" y2="12" />
-                  <line x1="4.93" y1="19.07" x2="7.76" y2="16.24" />
-                  <line x1="16.24" y1="7.76" x2="19.07" y2="4.93" />
-                </svg>
-              </motion.div>
-
-              {/* Pulsing Core */}
-              <div
-                className="absolute w-6 h-6 rounded-full blur-md animate-pulse"
-                style={{ backgroundColor: currentTheme.primary }}
+                transition={{ duration: 16, repeat: Infinity, ease: "linear" }}
+                className="absolute -inset-3 rounded-full border border-dashed opacity-40 pointer-events-none"
+                style={{ borderColor: currentTheme.primary }}
               />
+
+              {/* Pulsing Ambient Glow */}
+              <div
+                className="absolute -inset-2 rounded-full blur-xl opacity-60 animate-pulse pointer-events-none"
+                style={{ backgroundColor: currentTheme.glow_color }}
+              />
+
+              {/* Central Logo Container */}
+              <div
+                className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden border-2 p-1 shadow-2xl backdrop-blur-md"
+                style={{
+                  backgroundColor: currentTheme.card_bg,
+                  borderColor: currentTheme.border_color,
+                  boxShadow: `0 0 35px -5px ${currentTheme.glow_color}`,
+                }}
+              >
+                <Image
+                  src="/gallery/logo.png"
+                  alt="Abdullah Bin Zubair Hashmi Logo"
+                  width={96}
+                  height={96}
+                  className="w-full h-full object-cover rounded-full select-none"
+                  priority
+                />
+              </div>
             </div>
 
             {/* Name & Credentials */}

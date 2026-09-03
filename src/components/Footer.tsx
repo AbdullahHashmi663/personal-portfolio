@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowUp, Shield } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
 
@@ -22,11 +23,29 @@ export default function Footer() {
           className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 pb-8 border-b"
           style={{ borderColor: currentTheme.border_color }}
         >
-          <div>
-            <span className="text-base font-bold text-white tracking-tight">Abdullah Bin Zubair Hashmi</span>
-            <p className="text-xs text-zinc-400 mt-1 font-mono">
-              Full-Stack Developer · C++ & ASP.NET Engineer · Creative Technologist
-            </p>
+          <div className="flex items-center gap-3.5">
+            <div
+              className="w-10 h-10 rounded-full overflow-hidden border p-[2px] flex-shrink-0"
+              style={{
+                backgroundColor: currentTheme.card_bg,
+                borderColor: currentTheme.border_color,
+                boxShadow: `0 0 15px -3px ${currentTheme.glow_color}`,
+              }}
+            >
+              <Image
+                src="/gallery/logo.png"
+                alt="Abdullah Logo"
+                width={40}
+                height={40}
+                className="w-full h-full object-cover rounded-full select-none"
+              />
+            </div>
+            <div>
+              <span className="text-base font-bold text-white tracking-tight">Abdullah Bin Zubair Hashmi</span>
+              <p className="text-xs text-zinc-400 mt-0.5 font-mono">
+                Full-Stack Developer · C++ & ASP.NET Engineer · Creative Technologist
+              </p>
+            </div>
           </div>
 
           <div className="flex items-center gap-6 text-xs text-zinc-400 font-medium">

@@ -19,9 +19,23 @@ export default function HeroSection({ profile }: HeroSectionProps) {
   const [emailSent, setEmailSent] = useState(false);
   const { currentTheme } = useTheme();
 
-  const handleEmailSubmit = (e: React.FormEvent) => {
+  const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!emailInput.trim()) return;
+    try {
+      await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: "Visitor (Hero Quick Collaborate)",
+          email: emailInput.trim(),
+          subject: "Direct Collaboration Inquiry from Hero Section",
+          message: "Visitor submitted email to initiate project collaboration from the hero section.",
+        }),
+      });
+    } catch {
+      // continue to UI feedback
+    }
     setEmailSent(true);
     setTimeout(() => {
       setEmailSent(false);

@@ -16,9 +16,9 @@ import {
   fetchExperiences,
   fetchCertifications,
   fetchInspirationQuote,
-} from "@/lib/data";
+} from "@/lib/server-data";
 
-export const revalidate = 60; // Revalidate every 60 seconds
+export const dynamic = "force-dynamic";
 
 export default async function Home() {
   const [profile, projects, skills, experiences, certifications, quote] = await Promise.all([

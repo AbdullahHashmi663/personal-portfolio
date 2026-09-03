@@ -348,13 +348,12 @@ export async function fetchSkills(): Promise<Skill[]> {
 
 export async function saveSkillInDb(skill: Skill): Promise<boolean> {
   try {
-    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL.includes("your-project-id")) {
-      return true;
-    }
-    const supabase = createBrowserClient();
-    const { error } = await (supabase.from("skills") as any).upsert([skill]);
-    if (error) throw error;
-    return true;
+    const res = await fetch("/api/admin/data", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "add_skill", payload: skill }),
+    });
+    return res.ok;
   } catch (err) {
     console.error("Error saving skill:", err);
     return false;
@@ -363,13 +362,12 @@ export async function saveSkillInDb(skill: Skill): Promise<boolean> {
 
 export async function deleteSkillFromDb(skillId: string): Promise<boolean> {
   try {
-    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL.includes("your-project-id")) {
-      return true;
-    }
-    const supabase = createBrowserClient();
-    const { error } = await (supabase.from("skills") as any).delete().eq("id", skillId);
-    if (error) throw error;
-    return true;
+    const res = await fetch("/api/admin/data", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "delete_skill", payload: { id: skillId } }),
+    });
+    return res.ok;
   } catch (err) {
     console.error("Error deleting skill:", err);
     return false;
@@ -377,51 +375,25 @@ export async function deleteSkillFromDb(skillId: string): Promise<boolean> {
 }
 
 export async function fetchExperiences(): Promise<Experience[]> {
-  try {
-    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL.includes("your-project-id")) {
-      return fallbackExperiences;
-    }
-    const supabase = createBrowserClient();
-    const { data, error } = await supabase.from("experiences").select("*").order("display_order", { ascending: true });
-    if (error || !data || data.length === 0) return fallbackExperiences;
-    return data as Experience[];
-  } catch {
-    return fallbackExperiences;
-  }
+  return fallbackExperiences;
 }
 
 export async function fetchCertifications(): Promise<Certification[]> {
-  try {
-    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL.includes("your-project-id")) {
-      return fallbackCertifications;
-    }
-    const supabase = createBrowserClient();
-    const { data, error } = await supabase.from("certifications").select("*");
-    if (error || !data || data.length === 0) return fallbackCertifications;
-    return data as Certification[];
-  } catch {
-    return fallbackCertifications;
-  }
+  return fallbackCertifications;
 }
 
 export async function submitContactMessage(formData: { name: string; email: string; subject?: string; message: string }) {
   try {
-    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL.includes("your-project-id")) {
-      console.log("Mock Message Recorded:", formData);
-      return { success: true, message: "Thank you! Your message has been received." };
-    }
-    const supabase = createBrowserClient();
-    const { error } = await (supabase.from("messages") as any).insert([
-      {
-        name: formData.name,
-        email: formData.email,
-        subject: formData.subject || "Portfolio Contact Inquiry",
-        message: formData.message,
-        read: false,
-      }
-    ]);
-    if (error) throw error;
-    return { success: true, message: "Thank you! Your message has been sent successfully." };
+    const res = await fetch("/api/contact", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
+    });
+    const data = await res.json();
+    return {
+      success: res.ok && data.success,
+      message: data.message || (res.ok ? "Thank you! Your message has been sent successfully." : "Failed to send message."),
+    };
   } catch (err: any) {
     console.error("Submit message error:", err);
     return { success: false, message: err.message || "Failed to send message. Please try again." };
@@ -461,13 +433,12 @@ export async function setActiveThemeInDb(themeId: string): Promise<boolean> {
 
 export async function saveThemeInDb(theme: Theme): Promise<boolean> {
   try {
-    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL.includes("your-project-id")) {
-      return true;
-    }
-    const supabase = createBrowserClient();
-    const { error } = await (supabase.from("themes") as any).upsert([theme]);
-    if (error) throw error;
-    return true;
+    const res = await fetch("/api/admin/data", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "save_custom_theme", payload: theme }),
+    });
+    return res.ok;
   } catch (err) {
     console.error("Error saving theme:", err);
     return false;
@@ -476,13 +447,12 @@ export async function saveThemeInDb(theme: Theme): Promise<boolean> {
 
 export async function deleteThemeFromDb(themeId: string): Promise<boolean> {
   try {
-    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL.includes("your-project-id")) {
-      return true;
-    }
-    const supabase = createBrowserClient();
-    const { error } = await (supabase.from("themes") as any).delete().eq("id", themeId);
-    if (error) throw error;
-    return true;
+    const res = await fetch("/api/admin/data", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "delete_custom_theme", payload: { id: themeId } }),
+    });
+    return res.ok;
   } catch (err) {
     console.error("Error deleting theme:", err);
     return false;
@@ -532,13 +502,12 @@ export async function fetchInspirationQuote(): Promise<InspirationQuote> {
 
 export async function saveInspirationQuote(quote: InspirationQuote): Promise<boolean> {
   try {
-    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL.includes("your-project-id")) {
-      return true;
-    }
-    const supabase = createBrowserClient();
-    const { error } = await (supabase.from("quotes") as any).upsert([quote]);
-    if (error) throw error;
-    return true;
+    const res = await fetch("/api/admin/data", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "update_quote", payload: quote }),
+    });
+    return res.ok;
   } catch (err) {
     console.error("Error saving inspiration quote:", err);
     return false;

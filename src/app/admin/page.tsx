@@ -186,18 +186,35 @@ export default function AdminPage() {
   };
 
   // 1. Profile Save
-  const handleProfileSave = (e: React.FormEvent) => {
+  const handleProfileSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    showToast("Profile configuration updated successfully!");
+    setIsSaving(true);
+    try {
+      const res = await fetch("/api/admin/data", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "update_profile", payload: profile }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast("Profile configuration saved & published to website!");
+      } else {
+        showToast("Failed to save profile: " + (data.error || "Unknown error"));
+      }
+    } catch {
+      showToast("Error updating profile.");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   // 2. Project Actions
-  const handleAddProject = (e: React.FormEvent) => {
+  const handleAddProject = async (e: React.FormEvent) => {
     e.preventDefault();
     const newProj: Project = {
       id: `proj-${Date.now()}`,
       title: newProjectForm.title,
-      slug: newProjectForm.slug || newProjectForm.title.toLowerCase().replace(/\s+/g, "-"),
+      slug: newProjectForm.slug || newProjectForm.title.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
       tagline: newProjectForm.tagline,
       description: newProjectForm.description,
       category: newProjectForm.category,
@@ -225,18 +242,62 @@ export default function AdminPage() {
       featured: false,
       architecture_details: "",
     });
-    showToast("New project created successfully!");
+    try {
+      await fetch("/api/admin/data", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "add_project", payload: newProj }),
+      });
+      showToast("New project published to website!");
+    } catch {
+      showToast("Project saved locally.");
+    }
   };
 
-  const handleDeleteProject = (id: string) => {
+  const handleUpdateProject = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingProject) return;
+    setProjects(projects.map((p) => (p.id === editingProject.id ? editingProject : p)));
+    try {
+      await fetch("/api/admin/data", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "update_project", payload: editingProject }),
+      });
+      showToast(`Project "${editingProject.title}" updated on website!`);
+    } catch {
+      showToast("Project updated locally.");
+    }
+    setEditingProject(null);
+  };
+
+  const handleDeleteProject = async (id: string) => {
     setProjects(projects.filter((p) => p.id !== id));
-    showToast("Project removed from database.");
+    try {
+      await fetch("/api/admin/data", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "delete_project", payload: { id } }),
+      });
+      showToast("Project removed from database & website.");
+    } catch {
+      showToast("Project removed locally.");
+    }
   };
 
-  const handleToggleFeatured = (id: string) => {
-    setProjects(
-      projects.map((p) => (p.id === id ? { ...p, featured: !p.featured } : p))
-    );
+  const handleToggleFeatured = async (id: string) => {
+    const updated = projects.map((p) => (p.id === id ? { ...p, featured: !p.featured } : p));
+    setProjects(updated);
+    try {
+      await fetch("/api/admin/data", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "toggle_project_featured", payload: { id } }),
+      });
+      showToast("Featured status updated on website!");
+    } catch {
+      // local update
+    }
   };
 
   // 3. Skill Actions (Syncs with Swiss Typographic Ledger)
@@ -255,29 +316,53 @@ export default function AdminPage() {
       created_at: new Date().toISOString(),
     };
     setSkills([...skills, newSkill]);
-    await saveSkillInDb(newSkill);
     setNewSkillForm({ name: "", category: "Full-Stack & Enterprise Architecture", experience_years: "2+ yrs" });
-    showToast(`Added "${newSkill.name}" to skills registry!`);
+    try {
+      await fetch("/api/admin/data", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "add_skill", payload: newSkill }),
+      });
+      showToast(`Added "${newSkill.name}" to skills registry & website!`);
+    } catch {
+      showToast(`Added "${newSkill.name}" locally.`);
+    }
   };
 
   const handleDeleteSkill = async (id: string) => {
     const target = skills.find((s) => s.id === id);
     setSkills(skills.filter((s) => s.id !== id));
-    await deleteSkillFromDb(id);
-    showToast(`Removed "${target?.name || "Skill"}" from registry.`);
+    try {
+      await fetch("/api/admin/data", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "delete_skill", payload: { id } }),
+      });
+      showToast(`Removed "${target?.name || "Skill"}" from registry & website.`);
+    } catch {
+      showToast("Skill removed locally.");
+    }
   };
 
   const handleUpdateSkill = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingSkill) return;
     setSkills(skills.map((s) => (s.id === editingSkill.id ? editingSkill : s)));
-    await saveSkillInDb(editingSkill);
+    try {
+      await fetch("/api/admin/data", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "update_skill", payload: editingSkill }),
+      });
+      showToast(`Updated "${editingSkill.name}" on website!`);
+    } catch {
+      showToast("Skill updated locally.");
+    }
     setEditingSkill(null);
-    showToast(`Updated "${editingSkill.name}" successfully!`);
   };
 
   // 4. Experience Actions
-  const handleAddExp = (e: React.FormEvent) => {
+  const handleAddExp = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newExpForm.company || !newExpForm.role) return;
     const newExp: Experience = {
@@ -294,22 +379,58 @@ export default function AdminPage() {
     };
     setExperiences([newExp, ...experiences]);
     setNewExpForm({ company: "", role: "", period: "", location: "Islamabad, Pakistan", description: "", achievements: "", technologies: "" });
-    showToast("Career experience saved!");
+    try {
+      await fetch("/api/admin/data", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "add_experience", payload: newExp }),
+      });
+      showToast("Career milestone saved & published to website!");
+    } catch {
+      showToast("Career experience saved locally.");
+    }
   };
 
-  const handleDeleteExp = (id: string) => {
+  const handleDeleteExp = async (id: string) => {
     setExperiences(experiences.filter((e) => e.id !== id));
-    showToast("Experience removed.");
+    try {
+      await fetch("/api/admin/data", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "delete_experience", payload: { id } }),
+      });
+      showToast("Experience removed from website.");
+    } catch {
+      showToast("Experience removed locally.");
+    }
   };
 
   // 5. Message Actions
-  const handleToggleMessageRead = (id: string) => {
+  const handleToggleMessageRead = async (id: string) => {
     setMessages(messages.map((m) => (m.id === id ? { ...m, read: !m.read } : m)));
+    try {
+      await fetch("/api/admin/data", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "toggle_message_read", payload: { id } }),
+      });
+    } catch {
+      // ignore
+    }
   };
 
-  const handleDeleteMessage = (id: string) => {
+  const handleDeleteMessage = async (id: string) => {
     setMessages(messages.filter((m) => m.id !== id));
-    showToast("Message deleted from inbox.");
+    try {
+      await fetch("/api/admin/data", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "delete_message", payload: { id } }),
+      });
+      showToast("Message deleted from inbox.");
+    } catch {
+      showToast("Message deleted locally.");
+    }
   };
 
   // 6. Theme Actions
@@ -363,7 +484,7 @@ export default function AdminPage() {
 
   const handleActivateTheme = async (themeId: string) => {
     await setTheme(themeId);
-    showToast("Active global theme updated!");
+    showToast("Active global theme updated across website!");
   };
 
   const handleDeleteCustomTheme = async (themeId: string) => {
@@ -375,20 +496,18 @@ export default function AdminPage() {
   useEffect(() => {
     const loadAllAdminData = async () => {
       try {
-        const [p, pr, sk, ex, q] = await Promise.all([
-          fetchProfile(),
-          fetchProjects(),
-          fetchSkills(),
-          fetchExperiences(),
-          fetchInspirationQuote(),
-        ]);
-        if (p) setProfile(p);
-        if (pr && pr.length) setProjects(pr);
-        if (sk && sk.length) setSkills(sk);
-        if (ex && ex.length) setExperiences(ex);
-        if (q) setQuote(q);
+        const res = await fetch("/api/admin/data");
+        const json = await res.json();
+        if (json.success && json.data) {
+          if (json.data.profile) setProfile(json.data.profile);
+          if (json.data.projects && json.data.projects.length) setProjects(json.data.projects);
+          if (json.data.skills && json.data.skills.length) setSkills(json.data.skills);
+          if (json.data.experiences && json.data.experiences.length) setExperiences(json.data.experiences);
+          if (json.data.quote) setQuote(json.data.quote);
+          if (json.data.messages) setMessages(json.data.messages);
+        }
       } catch (err) {
-        console.warn("Failed to load initial admin data:", err);
+        console.warn("Failed to load initial admin data from API:", err);
       }
     };
     loadAllAdminData();
@@ -396,10 +515,19 @@ export default function AdminPage() {
 
   const handleQuoteSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    const success = await saveInspirationQuote(quote);
-    if (success) {
-      showToast("Inspiration quote published and saved to Supabase database!");
-    } else {
+    try {
+      const res = await fetch("/api/admin/data", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "update_quote", payload: quote }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast("Inspiration quote published to website Swiss poster!");
+      } else {
+        showToast("Failed to save quote.");
+      }
+    } catch {
       showToast("Quote saved locally.");
     }
   };
@@ -807,6 +935,13 @@ export default function AdminPage() {
                         {proj.featured ? "Featured ★" : "Feature"}
                       </button>
                       <button
+                        onClick={() => setEditingProject(proj)}
+                        className="p-2 rounded-lg bg-zinc-800 text-zinc-400 hover:text-white hover:bg-zinc-700 transition-all cursor-pointer"
+                        title="Edit project"
+                      >
+                        <Edit3 className="w-3.5 h-3.5" />
+                      </button>
+                      <button
                         onClick={() => handleDeleteProject(proj.id)}
                         className="p-2 rounded-lg bg-zinc-800 text-zinc-400 hover:text-red-400 hover:bg-zinc-700 transition-all cursor-pointer"
                         aria-label="Delete project"
@@ -899,6 +1034,126 @@ export default function AdminPage() {
                           className="px-5 py-2 rounded-xl bg-white text-black text-xs font-semibold hover:bg-zinc-200"
                         >
                           Save Project
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              )}
+
+              {/* Edit Project Modal */}
+              {editingProject && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
+                  <div className="relative w-full max-w-xl rounded-3xl border border-zinc-800 bg-zinc-950 p-6 sm:p-8 text-white shadow-2xl">
+                    <div className="flex items-center justify-between border-b border-zinc-800 pb-3 mb-4">
+                      <h3 className="text-lg font-bold flex items-center gap-2">
+                        <Edit3 className="w-4 h-4 text-emerald-400" />
+                        <span>Edit Project Details</span>
+                      </h3>
+                      <button
+                        onClick={() => setEditingProject(null)}
+                        className="text-zinc-400 hover:text-white text-xs"
+                      >
+                        ✕
+                      </button>
+                    </div>
+
+                    <form onSubmit={handleUpdateProject} className="space-y-4">
+                      <div>
+                        <label className="text-xs font-mono text-zinc-400 uppercase">Project Title</label>
+                        <input
+                          type="text"
+                          required
+                          value={editingProject.title}
+                          onChange={(e) => setEditingProject({ ...editingProject, title: e.target.value })}
+                          className="w-full mt-1 rounded-xl border border-zinc-800 bg-zinc-900 px-3.5 py-2 text-xs text-white focus:outline-none"
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <label className="text-xs font-mono text-zinc-400 uppercase">Category</label>
+                          <select
+                            value={editingProject.category}
+                            onChange={(e) => setEditingProject({ ...editingProject, category: e.target.value })}
+                            className="w-full mt-1 rounded-xl border border-zinc-800 bg-zinc-900 px-3.5 py-2 text-xs text-white focus:outline-none"
+                          >
+                            <option value="AI & IoT">AI & IoT</option>
+                            <option value="Full-Stack">Full-Stack</option>
+                            <option value="Systems & C++">Systems & C++</option>
+                            <option value="Mobile & AI">Mobile & AI</option>
+                            <option value="Web & 3D">Web & 3D</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className="text-xs font-mono text-zinc-400 uppercase">Technologies (comma-separated)</label>
+                          <input
+                            type="text"
+                            value={editingProject.technologies.join(", ")}
+                            onChange={(e) => setEditingProject({
+                              ...editingProject,
+                              technologies: e.target.value.split(",").map((t) => t.trim()).filter(Boolean)
+                            })}
+                            className="w-full mt-1 rounded-xl border border-zinc-800 bg-zinc-900 px-3.5 py-2 text-xs text-white focus:outline-none"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <label className="text-xs font-mono text-zinc-400 uppercase">GitHub URL</label>
+                          <input
+                            type="text"
+                            value={editingProject.github_url || ""}
+                            onChange={(e) => setEditingProject({ ...editingProject, github_url: e.target.value })}
+                            className="w-full mt-1 rounded-xl border border-zinc-800 bg-zinc-900 px-3.5 py-2 text-xs text-white focus:outline-none"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-xs font-mono text-zinc-400 uppercase">Live URL</label>
+                          <input
+                            type="text"
+                            value={editingProject.live_url || ""}
+                            onChange={(e) => setEditingProject({ ...editingProject, live_url: e.target.value })}
+                            className="w-full mt-1 rounded-xl border border-zinc-800 bg-zinc-900 px-3.5 py-2 text-xs text-white focus:outline-none"
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="text-xs font-mono text-zinc-400 uppercase">Short Description</label>
+                        <textarea
+                          rows={2}
+                          required
+                          value={editingProject.description}
+                          onChange={(e) => setEditingProject({ ...editingProject, description: e.target.value })}
+                          className="w-full mt-1 rounded-xl border border-zinc-800 bg-zinc-900 px-3.5 py-2 text-xs text-white focus:outline-none"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-xs font-mono text-zinc-400 uppercase">Architecture Details</label>
+                        <textarea
+                          rows={2}
+                          value={editingProject.architecture_details || ""}
+                          onChange={(e) => setEditingProject({ ...editingProject, architecture_details: e.target.value })}
+                          className="w-full mt-1 rounded-xl border border-zinc-800 bg-zinc-900 px-3.5 py-2 text-xs text-white focus:outline-none"
+                        />
+                      </div>
+
+                      <div className="flex items-center justify-end gap-3 pt-2">
+                        <button
+                          type="button"
+                          onClick={() => setEditingProject(null)}
+                          className="px-4 py-2 rounded-xl text-xs text-zinc-400 hover:text-white cursor-pointer"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          type="submit"
+                          className="px-5 py-2 rounded-xl bg-white text-black text-xs font-semibold hover:bg-zinc-200 cursor-pointer"
+                        >
+                          Update Project
                         </button>
                       </div>
                     </form>

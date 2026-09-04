@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+
+# Googlebot-Favicon specific crawler rule
+User-agent: Googlebot-Favicon
+Allow: /favicon.ico
+Allow: /icon*.png
+Allow: /apple-touch-icon.png
+Allow: /gallery/
+
+Sitemap: https://www.abdullahbinzubairhashmi.dev/sitemap.xml

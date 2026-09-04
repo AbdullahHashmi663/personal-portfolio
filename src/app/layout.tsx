@@ -109,11 +109,15 @@ export const metadata: Metadata = {
   ],
   icons: {
     icon: [
-      { url: "/gallery/logo.png?v=2", sizes: "any" },
-      { url: "/gallery/logo.png?v=2", type: "image/png" },
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon-48x48.png", sizes: "48x48", type: "image/png" },
+      { url: "/icon-96x96.png", sizes: "96x96", type: "image/png" },
+      { url: "/icon-192x192.png", sizes: "192x192", type: "image/png" },
     ],
-    shortcut: "/gallery/logo.png?v=2",
-    apple: "/gallery/logo.png?v=2",
+    shortcut: "/favicon.ico",
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    ],
   },
 };
 
@@ -128,9 +132,6 @@ export default function RootLayout({
       className={`${paradiso.variable} ${bropella.variable} ${carlBrown.variable} ${narnia.variable} ${silverGarden.variable} ${ardent.variable} ${raks.variable} ${limer.variable} ${plusJakartaSans.variable} ${jetbrainsMono.variable} dark h-full antialiased scroll-smooth`}
     >
       <head>
-        <link rel="icon" href="/gallery/logo.png?v=2" type="image/png" />
-        <link rel="shortcut icon" href="/gallery/logo.png?v=2" type="image/png" />
-        <link rel="apple-touch-icon" href="/gallery/logo.png?v=2" />
         {/* Zero-FOUT Immediate Theme Token Cache Hydration Script */}
         <script
           dangerouslySetInnerHTML={{

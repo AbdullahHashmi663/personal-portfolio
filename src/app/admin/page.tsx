@@ -712,7 +712,7 @@ export default function AdminPage() {
               <span>Supabase REST Connected</span>
             </div>
             <p className="text-[10px] text-zinc-500 font-mono">
-              PostgreSQL avacftrvrpetdeqoacxk
+              PostgreSQL ybdcxdqwxjxrbktitqhq (Pooler: 6543)
             </p>
           </div>
         </aside>

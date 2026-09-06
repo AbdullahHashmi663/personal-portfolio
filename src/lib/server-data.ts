@@ -1,3 +1,4 @@
+import { query, queryOne } from "@/lib/db";
 import { getDb } from "@/lib/store";
 import {
   fallbackProfile,
@@ -11,70 +12,152 @@ import { Profile, Project, Skill, Experience, Certification, InspirationQuote, T
 
 export async function fetchProfile(): Promise<Profile> {
   try {
+    if (process.env.DATABASE_URL) {
+      const row = await queryOne<any>("SELECT * FROM public.profiles LIMIT 1");
+      if (row) {
+        return {
+          ...row,
+          cgpa: row.cgpa != null ? parseFloat(row.cgpa) : fallbackProfile.cgpa,
+        } as Profile;
+      }
+    }
     const db = getDb();
     return db.profile || fallbackProfile;
   } catch (err) {
-    console.error("fetchProfile server error:", err);
-    return fallbackProfile;
+    console.warn("fetchProfile database note:", err);
+    try {
+      const db = getDb();
+      return db.profile || fallbackProfile;
+    } catch {
+      return fallbackProfile;
+    }
   }
 }
 
 export async function fetchProjects(): Promise<Project[]> {
   try {
+    if (process.env.DATABASE_URL) {
+      const rows = await query<any>("SELECT * FROM public.projects ORDER BY display_order ASC, created_at DESC");
+      if (rows && rows.length > 0) {
+        return rows as Project[];
+      }
+    }
     const db = getDb();
     return db.projects && db.projects.length > 0 ? db.projects : fallbackProjects;
   } catch (err) {
-    console.error("fetchProjects server error:", err);
-    return fallbackProjects;
+    console.warn("fetchProjects database note:", err);
+    try {
+      const db = getDb();
+      return db.projects && db.projects.length > 0 ? db.projects : fallbackProjects;
+    } catch {
+      return fallbackProjects;
+    }
   }
 }
 
 export async function fetchSkills(): Promise<Skill[]> {
   try {
+    if (process.env.DATABASE_URL) {
+      const rows = await query<any>("SELECT * FROM public.skills ORDER BY display_order ASC, created_at ASC");
+      if (rows && rows.length > 0) {
+        return rows as Skill[];
+      }
+    }
     const db = getDb();
     return db.skills && db.skills.length > 0 ? db.skills : fallbackSkills;
   } catch (err) {
-    console.error("fetchSkills server error:", err);
-    return fallbackSkills;
+    console.warn("fetchSkills database note:", err);
+    try {
+      const db = getDb();
+      return db.skills && db.skills.length > 0 ? db.skills : fallbackSkills;
+    } catch {
+      return fallbackSkills;
+    }
   }
 }
 
 export async function fetchExperiences(): Promise<Experience[]> {
   try {
+    if (process.env.DATABASE_URL) {
+      const rows = await query<any>("SELECT * FROM public.experiences ORDER BY display_order ASC, created_at ASC");
+      if (rows && rows.length > 0) {
+        return rows as Experience[];
+      }
+    }
     const db = getDb();
     return db.experiences && db.experiences.length > 0 ? db.experiences : fallbackExperiences;
   } catch (err) {
-    console.error("fetchExperiences server error:", err);
-    return fallbackExperiences;
+    console.warn("fetchExperiences database note:", err);
+    try {
+      const db = getDb();
+      return db.experiences && db.experiences.length > 0 ? db.experiences : fallbackExperiences;
+    } catch {
+      return fallbackExperiences;
+    }
   }
 }
 
 export async function fetchCertifications(): Promise<Certification[]> {
   try {
+    if (process.env.DATABASE_URL) {
+      const rows = await query<any>("SELECT * FROM public.certifications ORDER BY created_at ASC");
+      if (rows && rows.length > 0) {
+        return rows as Certification[];
+      }
+    }
     const db = getDb();
     return db.certifications && db.certifications.length > 0 ? db.certifications : fallbackCertifications;
   } catch (err) {
-    console.error("fetchCertifications server error:", err);
-    return fallbackCertifications;
+    console.warn("fetchCertifications database note:", err);
+    try {
+      const db = getDb();
+      return db.certifications && db.certifications.length > 0 ? db.certifications : fallbackCertifications;
+    } catch {
+      return fallbackCertifications;
+    }
   }
 }
 
 export async function fetchInspirationQuote(): Promise<InspirationQuote> {
   try {
+    if (process.env.DATABASE_URL) {
+      const row = await queryOne<any>("SELECT * FROM public.quotes WHERE is_active = true LIMIT 1");
+      if (row) {
+        return row as InspirationQuote;
+      }
+    }
     const db = getDb();
     return db.quote || fallbackQuote;
   } catch (err) {
-    console.error("fetchInspirationQuote server error:", err);
-    return fallbackQuote;
+    console.warn("fetchInspirationQuote database note:", err);
+    try {
+      const db = getDb();
+      return db.quote || fallbackQuote;
+    } catch {
+      return fallbackQuote;
+    }
   }
 }
 
 export async function fetchCustomThemes(): Promise<Theme[]> {
   try {
+    if (process.env.DATABASE_URL) {
+      const rows = await query<any>(
+        'SELECT id, name, category, description, background, foreground, card_bg, border_color, "primary", accent, glow_color, is_active, is_custom, created_at FROM public.themes ORDER BY created_at ASC'
+      );
+      if (rows && rows.length > 0) {
+        return rows as Theme[];
+      }
+    }
     const db = getDb();
     return db.customThemes || [];
   } catch (err) {
-    console.error("fetchCustomThemes server error:", err);
-    return [];
+    console.warn("fetchCustomThemes database note:", err);
+    try {
+      const db = getDb();
+      return db.customThemes || [];
+    } catch {
+      return [];
+    }
   }
 }

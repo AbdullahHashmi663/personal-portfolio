@@ -372,7 +372,7 @@ CREATE TABLE IF NOT EXISTS public.themes (
   foreground TEXT NOT NULL,
   card_bg TEXT NOT NULL,
   border_color TEXT NOT NULL,
-  primary TEXT NOT NULL,
+  "primary" TEXT NOT NULL,
   accent TEXT NOT NULL,
   glow_color TEXT NOT NULL,
   is_active BOOLEAN DEFAULT false,
@@ -384,7 +384,7 @@ ALTER TABLE public.themes ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Public themes are viewable by everyone." ON public.themes FOR SELECT USING (true);
 CREATE POLICY "Themes can be modified by anyone." ON public.themes FOR ALL USING (true);
 
-INSERT INTO public.themes (id, name, category, description, background, foreground, card_bg, border_color, primary, accent, glow_color, is_active, is_custom)
+INSERT INTO public.themes (id, name, category, description, background, foreground, card_bg, border_color, "primary", accent, glow_color, is_active, is_custom)
 VALUES
 (
   'oled-obsidian',
@@ -514,7 +514,7 @@ ON CONFLICT (id) DO UPDATE SET
   foreground = EXCLUDED.foreground,
   card_bg = EXCLUDED.card_bg,
   border_color = EXCLUDED.border_color,
-  primary = EXCLUDED.primary,
+  "primary" = EXCLUDED."primary",
   accent = EXCLUDED.accent,
   glow_color = EXCLUDED.glow_color;
 

@@ -1,5 +1,6 @@
 import crypto from "crypto";
 import { createClient as createServerClient } from "@/lib/supabase/server";
+import { queryOne, query } from "@/lib/db";
 
 export interface HashResult {
   hash: string;
@@ -75,7 +76,26 @@ export async function verifyAdminCredentials(password: string): Promise<boolean>
     return false;
   }
 
-  // 1. Attempt verification via Supabase `admin_auth` table
+  // 1. Direct PostgreSQL query to public.admin_auth
+  if (process.env.DATABASE_URL) {
+    try {
+      const row = await queryOne<{ password_hash: string; salt: string; iterations: number }>(
+        "SELECT password_hash, salt, iterations FROM public.admin_auth WHERE username = 'admin' LIMIT 1"
+      );
+      if (row && row.password_hash && row.salt) {
+        return verifyPassword(
+          password,
+          row.password_hash,
+          row.salt,
+          row.iterations || DEFAULT_ITERATIONS
+        );
+      }
+    } catch (dbErr) {
+      console.warn("Direct PostgreSQL admin_auth query note:", dbErr);
+    }
+  }
+
+  // 2. Attempt verification via Supabase client library
   try {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const isMock = !supabaseUrl || supabaseUrl.includes("your-project-id");
@@ -97,10 +117,10 @@ export async function verifyAdminCredentials(password: string): Promise<boolean>
       }
     }
   } catch (err) {
-    console.warn("Supabase admin_auth query note:", err);
+    console.warn("Supabase admin_auth client note:", err);
   }
 
-  // 2. Fallback to server-side cryptographic hash comparison
+  // 3. Fallback to server-side cryptographic hash comparison
   return verifyPassword(password, FALLBACK_HASH, FALLBACK_SALT, DEFAULT_ITERATIONS);
 }
 
@@ -109,6 +129,25 @@ export async function verifyAdminCredentials(password: string): Promise<boolean>
  */
 export async function updateAdminPasswordInSupabase(newPassword: string): Promise<boolean> {
   const hashed = hashPassword(newPassword);
+
+  if (process.env.DATABASE_URL) {
+    try {
+      await query(
+        `INSERT INTO public.admin_auth (username, password_hash, salt, iterations, algorithm, updated_at)
+         VALUES ('admin', $1, $2, $3, $4, timezone('utc'::text, now()))
+         ON CONFLICT (username) DO UPDATE SET
+           password_hash = EXCLUDED.password_hash,
+           salt = EXCLUDED.salt,
+           iterations = EXCLUDED.iterations,
+           algorithm = EXCLUDED.algorithm,
+           updated_at = timezone('utc'::text, now())`,
+        [hashed.hash, hashed.salt, hashed.iterations, hashed.algorithm]
+      );
+      return true;
+    } catch (dbErr) {
+      console.warn("Direct PostgreSQL updateAdminPassword note:", dbErr);
+    }
+  }
 
   try {
     const supabase = await createServerClient();

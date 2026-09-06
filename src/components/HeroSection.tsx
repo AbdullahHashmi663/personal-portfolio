@@ -45,6 +45,8 @@ export default function HeroSection({ profile }: HeroSectionProps) {
 
   const name = profile?.name || "Abdullah Bin Zubair Hashmi";
   const resumeUrl = profile?.resume_url || "/Abdullah_Bin_Zubair_Hashmi_CV__3_.pdf";
+  const bio = profile?.bio || "Based in Islamabad & Rawalpindi. Microsoft Certified Power Platform Developer Associate & Final-Year IT Bachelor at Bahria University (3.85 CGPA), specializing in Next.js, C#, ASP.NET Core, C++ systems, and 2D/3D web interactive animations.";
+  const cgpa = profile?.cgpa != null ? profile.cgpa : 3.85;
 
   return (
     <div className="w-full theme-surface selection:bg-white/20 selection:text-white transition-colors duration-500">
@@ -128,9 +130,9 @@ export default function HeroSection({ profile }: HeroSectionProps) {
               </div>
             </div>
 
-            {/* Description from Resume */}
+            {/* Description from Profile / Resume */}
             <p className="mt-2 sm:mt-6 text-xs sm:text-sm text-zinc-300 max-w-md leading-relaxed font-sans">
-              Based in Islamabad & Rawalpindi. <strong className="text-white">Microsoft Certified Power Platform Developer Associate</strong> & Final-Year IT Bachelor at Bahria University (<strong className="text-white font-mono">3.85 CGPA</strong>), specializing in Next.js, C#, ASP.NET Core, C++ systems, and 2D/3D web interactive animations.
+              {bio}
             </p>
 
             {/* Action Buttons */}
@@ -226,7 +228,7 @@ export default function HeroSection({ profile }: HeroSectionProps) {
                     className="text-2xl sm:text-3xl font-black font-mono"
                     style={{ color: currentTheme.primary }}
                   >
-                    3.85
+                    {cgpa}
                   </span>
                   <span className="text-[10px] font-mono text-zinc-400 uppercase mt-1.5">
                     CGPA / 4.00

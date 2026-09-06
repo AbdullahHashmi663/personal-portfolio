@@ -61,7 +61,7 @@ export default async function Home() {
         <ContactSection profile={profile} />
 
         {/* 8. Footer */}
-        <Footer />
+        <Footer profile={profile} />
       </main>
     </SmoothScroll>
   );

@@ -4,9 +4,17 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowUp, Shield } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
+import { Profile } from "@/types/database";
 
-export default function Footer() {
+interface FooterProps {
+  profile?: Profile;
+}
+
+export default function Footer({ profile }: FooterProps) {
   const { currentTheme } = useTheme();
+
+  const name = profile?.name || "Abdullah Bin Zubair Hashmi";
+  const tagline = profile?.tagline || "Full-Stack Developer · C++ & ASP.NET Engineer · Creative Technologist";
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -41,9 +49,9 @@ export default function Footer() {
               />
             </div>
             <div>
-              <span className="text-base font-bold text-white tracking-tight">Abdullah Bin Zubair Hashmi</span>
+              <span className="text-base font-bold text-white tracking-tight">{name}</span>
               <p className="text-xs text-zinc-400 mt-0.5 font-mono">
-                Full-Stack Developer · C++ & ASP.NET Engineer · Creative Technologist
+                {tagline}
               </p>
             </div>
           </div>

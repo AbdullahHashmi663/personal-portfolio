@@ -122,8 +122,9 @@ export async function POST(req: NextRequest) {
                 payload.degree,
               ]
             );
-          } catch (dbErr) {
-            console.warn("DB update_profile error:", dbErr);
+          } catch (dbErr: any) {
+            console.error("DB update_profile error:", dbErr);
+            return NextResponse.json({ success: false, error: `Database error: ${dbErr?.message}` }, { status: 500 });
           }
         }
         result = updateProfile(payload);
@@ -455,8 +456,9 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ success: false, error: `Unknown action: ${action}` }, { status: 400 });
     }
 
-    // Invalidate server cache for home page so changes go live immediately
+    // Invalidate server cache for home page and layout so changes go live immediately
     try {
+      revalidatePath("/", "layout");
       revalidatePath("/");
     } catch (revalErr) {
       console.warn("revalidatePath skipped in dev:", revalErr);

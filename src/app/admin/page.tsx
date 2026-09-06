@@ -85,6 +85,7 @@ export default function AdminPage() {
   // UI state
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState<string | null>(null);
+  const [dbStatus, setDbStatus] = useState<{ has_db_url: boolean; db_connected: boolean; source: string; error?: string } | null>(null);
 
   // Check persistent session on mount
   useEffect(() => {
@@ -506,6 +507,7 @@ export default function AdminPage() {
           if (json.data.experiences && json.data.experiences.length) setExperiences(json.data.experiences);
           if (json.data.quote) setQuote(json.data.quote);
           if (json.data.messages) setMessages(json.data.messages);
+          if (json.diagnostics) setDbStatus(json.diagnostics);
         }
       } catch (err) {
         console.warn("Failed to load initial admin data from API:", err);
@@ -707,13 +709,32 @@ export default function AdminPage() {
 
           <div className="p-4 rounded-2xl border border-zinc-800/80 bg-zinc-950/60 text-xs text-zinc-400 space-y-2">
             <p className="font-semibold text-white">Database Status</p>
-            <div className="flex items-center gap-2 text-[11px] font-mono text-emerald-400">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span>Supabase REST Connected</span>
-            </div>
-            <p className="text-[10px] text-zinc-500 font-mono">
-              PostgreSQL ybdcxdqwxjxrbktitqhq (Pooler: 6543)
-            </p>
+            {dbStatus === null ? (
+              <div className="flex items-center gap-2 text-[11px] font-mono text-zinc-400">
+                <span className="w-2 h-2 rounded-full bg-zinc-500 animate-pulse" />
+                <span>Checking Database...</span>
+              </div>
+            ) : dbStatus.db_connected ? (
+              <>
+                <div className="flex items-center gap-2 text-[11px] font-mono text-emerald-400">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <span>Supabase Live Connected</span>
+                </div>
+                <p className="text-[10px] text-zinc-500 font-mono">
+                  Pooler: aws-0-ap-southeast-1:6543
+                </p>
+              </>
+            ) : (
+              <>
+                <div className="flex items-center gap-2 text-[11px] font-mono text-amber-400">
+                  <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+                  <span>Database Disconnected</span>
+                </div>
+                <p className="text-[10px] text-amber-400/90 font-mono">
+                  {dbStatus.has_db_url ? "Connection Error" : "Missing DATABASE_URL on Vercel"}
+                </p>
+              </>
+            )}
           </div>
         </aside>
 

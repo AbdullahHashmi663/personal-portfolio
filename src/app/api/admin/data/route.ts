@@ -59,14 +59,42 @@ export async function GET() {
           customThemes: customThemes || [],
         };
 
-        return NextResponse.json({ success: true, data: dbData });
-      } catch (dbErr) {
+        return NextResponse.json({
+          success: true,
+          data: dbData,
+          diagnostics: {
+            has_db_url: true,
+            db_connected: true,
+            source: "supabase_postgresql",
+          },
+        });
+      } catch (dbErr: any) {
         console.warn("Direct PostgreSQL admin GET failed, using fallback:", dbErr);
+        const db = getDb();
+        return NextResponse.json({
+          success: true,
+          data: db,
+          diagnostics: {
+            has_db_url: true,
+            db_connected: false,
+            source: "local_json_fallback",
+            error: dbErr?.message || String(dbErr),
+          },
+        });
       }
     }
 
     const db = getDb();
-    return NextResponse.json({ success: true, data: db });
+    return NextResponse.json({
+      success: true,
+      data: db,
+      diagnostics: {
+        has_db_url: false,
+        db_connected: false,
+        source: "local_json_fallback",
+        error: "DATABASE_URL is not set in environment variables.",
+      },
+    });
   } catch (err: any) {
     return NextResponse.json({ success: false, error: err.message }, { status: 500 });
   }
@@ -76,6 +104,17 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const { action, payload } = body;
+
+    if (!process.env.DATABASE_URL && process.env.VERCEL) {
+      return NextResponse.json(
+        {
+          success: false,
+          error:
+            "DATABASE_URL environment variable is missing on Vercel! Please add DATABASE_URL in your Vercel Project Settings and Redeploy.",
+        },
+        { status: 500 }
+      );
+    }
 
     let result: any = null;
 

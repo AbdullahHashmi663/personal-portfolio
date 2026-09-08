@@ -92,6 +92,7 @@ const jetbrainsMono = localFont({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://www.abdullahbinzubairhashmi.dev"),
   title: "Abdullah Bin Zubair Hashmi | Full-Stack Developer & Systems Engineer",
   description:
     "Portfolio of Abdullah Bin Zubair Hashmi — Full-Stack Developer, C++ & ASP.NET Engineer, Microsoft Certified Power Platform Developer Associate, and Creative Technologist.",
@@ -114,12 +115,14 @@ export const metadata: Metadata = {
       { url: "/icon-48x48.png", sizes: "48x48", type: "image/png" },
       { url: "/icon-96x96.png", sizes: "96x96", type: "image/png" },
       { url: "/icon-192x192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon-512x512.png", sizes: "512x512", type: "image/png" },
     ],
     shortcut: "/favicon.ico",
     apple: [
       { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
     ],
   },
+  manifest: "/site.webmanifest",
 };
 
 export default async function RootLayout({
@@ -138,6 +141,16 @@ export default async function RootLayout({
       className={`${paradiso.variable} ${bropella.variable} ${carlBrown.variable} ${narnia.variable} ${silverGarden.variable} ${ardent.variable} ${raks.variable} ${limer.variable} ${plusJakartaSans.variable} ${jetbrainsMono.variable} dark h-full antialiased scroll-smooth`}
     >
       <head>
+        {/* Favicon & Web Manifest Icons for Search Engines (Googlebot-Favicon) & Browsers */}
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" type="image/png" sizes="48x48" href="/icon-48x48.png" />
+        <link rel="icon" type="image/png" sizes="96x96" href="/icon-96x96.png" />
+        <link rel="icon" type="image/png" sizes="192x192" href="/icon-192x192.png" />
+        <link rel="icon" type="image/png" sizes="512x512" href="/icon-512x512.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+        <link rel="shortcut icon" href="/favicon.ico" />
+        <link rel="manifest" href="/site.webmanifest" />
+
         {/* Zero-FOUT Immediate Theme Token Cache Hydration Script */}
         <script
           dangerouslySetInnerHTML={{

@@ -1,20 +1,7 @@
 "use client";
 
-import { useState, useRef, useEffect, useMemo, useCallback } from "react";
-import {
-  Code2,
-  Server,
-  Binary,
-  Database,
-  Layers,
-  Sparkles,
-  ExternalLink,
-  ChevronDown,
-  ArrowUpRight,
-  Terminal,
-  Shield,
-  CheckCircle2,
-} from "lucide-react";
+import { useState, useRef, useMemo, useCallback } from "react";
+import { Terminal, Shield } from "lucide-react";
 import { Skill } from "@/types/database";
 import ScrollReveal from "@/components/ScrollReveal";
 import { useTheme } from "@/context/ThemeContext";
@@ -261,7 +248,6 @@ export default function SkillsSection({ skills = [] }: SkillsSectionProps) {
   // Floating Cursor State (Dennis Snellenberg Style)
   const sectionRef = useRef<HTMLElement>(null);
   const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
-  const [isHoveringSection, setIsHoveringSection] = useState(false);
   const [activeHoveredSkill, setActiveHoveredSkill] = useState<SkillEditorial | null>(null);
 
   // Mobile / Touch expanded skill
@@ -341,9 +327,7 @@ export default function SkillsSection({ skills = [] }: SkillsSectionProps) {
       ref={sectionRef}
       id="skills"
       onMouseMove={handleMouseMove}
-      onMouseEnter={() => setIsHoveringSection(true)}
       onMouseLeave={() => {
-        setIsHoveringSection(false);
         setActiveHoveredSkill(null);
       }}
       className="relative w-full py-28 px-4 sm:px-8 lg:px-14 theme-surface overflow-hidden border-t transition-colors duration-500"
@@ -371,7 +355,7 @@ export default function SkillsSection({ skills = [] }: SkillsSectionProps) {
                   className="text-xs font-mono tracking-widest uppercase font-bold"
                   style={{ color: currentTheme.primary }}
                 >
-                  // 04 — TECHNICAL SKILLS & CAPABILITIES
+                  {"// 04 — TECHNICAL SKILLS & CAPABILITIES"}
                 </span>
               </div>
               <h2 className="text-4xl sm:text-6xl font-normal tracking-tight text-white font-carl-brown">

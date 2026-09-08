@@ -8,7 +8,7 @@ import {
   fallbackCertifications,
   fallbackQuote,
 } from "@/lib/data";
-import { Profile, Project, Skill, Experience, Certification, InspirationQuote, Theme } from "@/types/database";
+import { Profile, Project, Skill, Experience, Certification, InspirationQuote } from "@/types/database";
 
 export async function fetchProfile(): Promise<Profile> {
   try {
@@ -139,25 +139,3 @@ export async function fetchInspirationQuote(): Promise<InspirationQuote> {
   }
 }
 
-export async function fetchCustomThemes(): Promise<Theme[]> {
-  try {
-    if (process.env.DATABASE_URL) {
-      const rows = await query<any>(
-        'SELECT id, name, category, description, background, foreground, card_bg, border_color, "primary", accent, glow_color, is_active, is_custom, created_at FROM public.themes ORDER BY created_at ASC'
-      );
-      if (rows && rows.length > 0) {
-        return rows as Theme[];
-      }
-    }
-    const db = getDb();
-    return db.customThemes || [];
-  } catch (err) {
-    console.warn("fetchCustomThemes database note:", err);
-    try {
-      const db = getDb();
-      return db.customThemes || [];
-    } catch {
-      return [];
-    }
-  }
-}

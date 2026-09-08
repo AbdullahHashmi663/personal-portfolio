@@ -18,7 +18,6 @@ import {
   Lock,
   ArrowLeft,
   Eye,
-  Sparkles,
   ExternalLink,
   Palette,
   Quote,
@@ -1781,7 +1780,7 @@ export default function AdminPage() {
                         {quote.handle || "@ABDULLAH_HASHMI"}
                       </span>
                       <span className="text-[9px] font-mono text-zinc-500 uppercase tracking-widest">
-                        // PREVIEW
+                        {"// PREVIEW"}
                       </span>
                     </div>
 

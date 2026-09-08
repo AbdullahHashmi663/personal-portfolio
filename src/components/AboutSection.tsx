@@ -298,58 +298,67 @@ export default function AboutSection({ profile, certifications = [] }: AboutSect
                 </div>
 
                 <div className="space-y-4">
-                  <div className="p-4 rounded-2xl border border-white/5 bg-white/[0.02] flex items-start justify-between gap-4">
-                    <div>
-                      <h4 className="text-sm font-bold text-white">Microsoft Power Platform Developer Associate</h4>
-                      <p className="text-xs text-zinc-400 mt-1">NAVTTC · Mar – Jun 2025</p>
-                      <p className="text-[11px] font-mono mt-1" style={{ color: currentTheme.accent }}>
-                        ASP.NET, C#, React, Web Forms, MVC, SQL Server
-                      </p>
-                    </div>
-                    <span
-                      className="px-2 py-1 rounded text-[10px] font-mono shrink-0 font-semibold"
-                      style={{
-                        backgroundColor: `color-mix(in srgb, ${currentTheme.primary} 15%, transparent)`,
-                        color: currentTheme.primary,
-                      }}
+                  {(certifications.length > 0
+                    ? certifications
+                    : [
+                        {
+                          id: "cert-1",
+                          title: "Microsoft Power Platform Developer Associate",
+                          issuer: "NAVTTC",
+                          period: "Mar – Jun 2025",
+                          description: "ASP.NET, C#, React, Web Forms, MVC, SQL Server",
+                          type: "Certified",
+                        },
+                        {
+                          id: "cert-2",
+                          title: "Master Course in Web Framework",
+                          issuer: "Udemy",
+                          period: "August 2023",
+                          description: "Web Architecture, Component Patterns & REST",
+                          type: "Certified",
+                        },
+                        {
+                          id: "cert-3",
+                          title: "Hafiz-e-Quran",
+                          issuer: "Jamia Islamia Hashmia",
+                          period: "18th May 2016",
+                          description: "Complete Memorization of the Holy Quran",
+                          type: "Honor",
+                        },
+                      ]
+                  ).map((cert) => (
+                    <div
+                      key={cert.id}
+                      className="p-4 rounded-2xl border border-white/5 bg-white/[0.02] flex items-start justify-between gap-4"
                     >
-                      Certified
-                    </span>
-                  </div>
-
-                  <div className="p-4 rounded-2xl border border-white/5 bg-white/[0.02] flex items-start justify-between gap-4">
-                    <div>
-                      <h4 className="text-sm font-bold text-white">Master Course in Web Framework</h4>
-                      <p className="text-xs text-zinc-400 mt-1">Udemy · August 2023</p>
-                      <p className="text-[11px] text-zinc-500 mt-1 font-mono">Web Architecture, Component Patterns & REST</p>
+                      <div>
+                        <h4 className="text-sm font-bold text-white">{cert.title}</h4>
+                        <p className="text-xs text-zinc-400 mt-1">
+                          {cert.issuer} {cert.period ? `· ${cert.period}` : ""}
+                        </p>
+                        {cert.description && (
+                          <p
+                            className="text-[11px] font-mono mt-1"
+                            style={{ color: currentTheme.accent }}
+                          >
+                            {cert.description}
+                          </p>
+                        )}
+                      </div>
+                      <span
+                        className="px-2 py-1 rounded text-[10px] font-mono shrink-0 font-semibold"
+                        style={{
+                          backgroundColor:
+                            cert.type === "Honor"
+                              ? `color-mix(in srgb, ${currentTheme.accent} 20%, transparent)`
+                              : `color-mix(in srgb, ${currentTheme.primary} 15%, transparent)`,
+                          color: cert.type === "Honor" ? currentTheme.accent : currentTheme.primary,
+                        }}
+                      >
+                        {cert.type || "Certified"}
+                      </span>
                     </div>
-                    <span
-                      className="px-2 py-1 rounded text-[10px] font-mono shrink-0 font-semibold"
-                      style={{
-                        backgroundColor: `color-mix(in srgb, ${currentTheme.primary} 15%, transparent)`,
-                        color: currentTheme.primary,
-                      }}
-                    >
-                      Certified
-                    </span>
-                  </div>
-
-                  <div className="p-4 rounded-2xl border border-white/5 bg-white/[0.02] flex items-start justify-between gap-4">
-                    <div>
-                      <h4 className="text-sm font-bold text-white">Hafiz-e-Quran</h4>
-                      <p className="text-xs text-zinc-400 mt-1">Jamia Islamia Hashmia · 18th May 2016</p>
-                      <p className="text-[11px] text-zinc-500 mt-1 font-mono">Complete Memorization of the Holy Quran</p>
-                    </div>
-                    <span
-                      className="px-2 py-1 rounded text-[10px] font-mono shrink-0 font-semibold"
-                      style={{
-                        backgroundColor: `color-mix(in srgb, ${currentTheme.accent} 20%, transparent)`,
-                        color: currentTheme.accent,
-                      }}
-                    >
-                      Honor
-                    </span>
-                  </div>
+                  ))}
                 </div>
               </div>
             </div>

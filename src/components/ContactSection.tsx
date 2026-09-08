@@ -70,7 +70,7 @@ export default function ContactSection({ profile }: ContactSectionProps) {
               <div className="flex items-center gap-2 mb-3">
                 <span className="h-[1px] w-6" style={{ backgroundColor: currentTheme.primary }} />
                 <span className="text-xs font-mono tracking-widest uppercase" style={{ color: currentTheme.primary }}>
-                  Let's Build Something Exceptional
+                  Let&apos;s Build Something Exceptional
                 </span>
               </div>
               <h2 className="text-3xl sm:text-5xl font-normal tracking-tight text-white font-narnia">

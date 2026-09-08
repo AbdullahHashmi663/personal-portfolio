@@ -66,7 +66,7 @@ export default function InspirationQuoteSection({
             {handle}
           </span>
           <span className="text-[10px] sm:text-xs font-mono text-zinc-500 uppercase tracking-widest">
-            // PHILOSOPHY & ETHOS
+            {"// PHILOSOPHY & ETHOS"}
           </span>
         </div>
 

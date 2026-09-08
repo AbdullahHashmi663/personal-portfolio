@@ -8,7 +8,8 @@ import {
   fallbackCertifications,
   fallbackQuote,
 } from "@/lib/data";
-import { Profile, Project, Skill, Experience, Certification, InspirationQuote } from "@/types/database";
+import { Profile, Project, Skill, Experience, Certification, InspirationQuote, Theme } from "@/types/database";
+import { defaultThemes } from "@/lib/themes";
 
 export async function fetchProfile(): Promise<Profile> {
   try {
@@ -138,4 +139,50 @@ export async function fetchInspirationQuote(): Promise<InspirationQuote> {
     }
   }
 }
+
+export async function fetchActiveTheme(): Promise<Theme> {
+  try {
+    if (process.env.DATABASE_URL) {
+      const row = await queryOne<any>(
+        'SELECT id, name, category, description, background, foreground, card_bg, border_color, "primary", accent, glow_color, is_active, is_custom, created_at FROM public.themes WHERE is_active = true LIMIT 1'
+      );
+      if (row) {
+        return row as Theme;
+      }
+    }
+    const db = getDb();
+    if (db.customThemes) {
+      const activeCustom = db.customThemes.find((t) => t.is_active);
+      if (activeCustom) return activeCustom;
+    }
+    return defaultThemes.find((t) => t.is_active) || defaultThemes[0];
+  } catch (err) {
+    console.warn("fetchActiveTheme database note:", err);
+    return defaultThemes.find((t) => t.is_active) || defaultThemes[0];
+  }
+}
+
+export async function fetchAllThemes(): Promise<Theme[]> {
+  try {
+    let dbThemes: Theme[] = [];
+    if (process.env.DATABASE_URL) {
+      const rows = await query<any>(
+        'SELECT id, name, category, description, background, foreground, card_bg, border_color, "primary", accent, glow_color, is_active, is_custom, created_at FROM public.themes ORDER BY created_at ASC'
+      );
+      if (rows && rows.length > 0) {
+        dbThemes = rows as Theme[];
+      }
+    }
+    if (dbThemes.length > 0) {
+      return dbThemes;
+    }
+    const db = getDb();
+    const custom = db.customThemes || [];
+    return [...defaultThemes, ...custom];
+  } catch (err) {
+    console.warn("fetchAllThemes database note:", err);
+    return defaultThemes;
+  }
+}
+
 

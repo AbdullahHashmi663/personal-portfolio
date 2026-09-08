@@ -491,6 +491,18 @@ export async function POST(req: NextRequest) {
         result = deleteCustomTheme(payload.id);
         break;
 
+      case "set_active_theme":
+        if (process.env.DATABASE_URL) {
+          try {
+            await query(`UPDATE public.themes SET is_active = false WHERE id != 'none'`);
+            await query(`UPDATE public.themes SET is_active = true WHERE id = $1`, [payload.id]);
+          } catch (dbErr) {
+            console.warn("DB set_active_theme error:", dbErr);
+          }
+        }
+        result = { success: true };
+        break;
+
       default:
         return NextResponse.json({ success: false, error: `Unknown action: ${action}` }, { status: 400 });
     }

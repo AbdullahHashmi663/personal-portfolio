@@ -416,14 +416,19 @@ export async function fetchThemes(): Promise<Theme[]> {
 
 export async function setActiveThemeInDb(themeId: string): Promise<boolean> {
   try {
-    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL.includes("your-project-id")) {
-      return true;
+    fetch("/api/admin/data", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "set_active_theme", payload: { id: themeId } }),
+    }).catch(() => {});
+
+    if (process.env.NEXT_PUBLIC_SUPABASE_URL && !process.env.NEXT_PUBLIC_SUPABASE_URL.includes("your-project-id")) {
+      const supabase = createBrowserClient();
+      // First deactivate all
+      await (supabase.from("themes") as any).update({ is_active: false }).neq("id", "none");
+      // Then activate selected
+      await (supabase.from("themes") as any).update({ is_active: true }).eq("id", themeId);
     }
-    const supabase = createBrowserClient();
-    // First deactivate all
-    await (supabase.from("themes") as any).update({ is_active: false }).neq("id", "none");
-    // Then activate selected
-    await (supabase.from("themes") as any).update({ is_active: true }).eq("id", themeId);
     return true;
   } catch (err) {
     console.error("Error activating theme:", err);

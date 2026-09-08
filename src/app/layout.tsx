@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { ThemeProvider } from "@/context/ThemeContext";
 import GlobalPreloader from "@/components/GlobalPreloader";
+import { fetchActiveTheme, fetchAllThemes } from "@/lib/server-data";
 
 // 1. Paradiso (TAN Paradiso - Art Nouveau flared decorative display serif)
 const paradiso = localFont({
@@ -121,11 +122,16 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const [activeTheme, allThemes] = await Promise.all([
+    fetchActiveTheme(),
+    fetchAllThemes(),
+  ]);
+
   return (
     <html
       lang="en"
@@ -139,19 +145,22 @@ export default function RootLayout({
               (function() {
                 try {
                   var raw = localStorage.getItem('portfolio_cached_active_theme_v2');
-                  if (raw) {
-                    var t = JSON.parse(raw);
-                    if (t && t.background) {
-                      var r = document.documentElement;
-                      r.style.setProperty('--background', t.background);
-                      r.style.setProperty('--foreground', t.foreground);
-                      r.style.setProperty('--card-bg', t.card_bg);
-                      r.style.setProperty('--border-color', t.border_color);
-                      r.style.setProperty('--primary', t.primary);
-                      r.style.setProperty('--accent', t.accent);
-                      r.style.setProperty('--glow-color', t.glow_color);
-                    }
-                  }
+                  var t = raw ? JSON.parse(raw) : null;
+                  var bg = (t && t.background) ? t.background : ${JSON.stringify(activeTheme.background)};
+                  var fg = (t && t.foreground) ? t.foreground : ${JSON.stringify(activeTheme.foreground)};
+                  var cardBg = (t && t.card_bg) ? t.card_bg : ${JSON.stringify(activeTheme.card_bg)};
+                  var border = (t && t.border_color) ? t.border_color : ${JSON.stringify(activeTheme.border_color)};
+                  var primary = (t && t.primary) ? t.primary : ${JSON.stringify(activeTheme.primary)};
+                  var accent = (t && t.accent) ? t.accent : ${JSON.stringify(activeTheme.accent)};
+                  var glow = (t && t.glow_color) ? t.glow_color : ${JSON.stringify(activeTheme.glow_color)};
+                  var r = document.documentElement;
+                  r.style.setProperty('--background', bg);
+                  r.style.setProperty('--foreground', fg);
+                  r.style.setProperty('--card-bg', cardBg);
+                  r.style.setProperty('--border-color', border);
+                  r.style.setProperty('--primary', primary);
+                  r.style.setProperty('--accent', accent);
+                  r.style.setProperty('--glow-color', glow);
                 } catch (e) {}
               })();
             `,
@@ -159,7 +168,7 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-full flex flex-col bg-black text-zinc-100 transition-colors duration-500">
-        <ThemeProvider>
+        <ThemeProvider initialActiveTheme={activeTheme} initialThemes={allThemes}>
           <GlobalPreloader />
           {children}
         </ThemeProvider>

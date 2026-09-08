@@ -28,32 +28,24 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 export function ThemeProvider({
   children,
   initialThemes = defaultThemes,
+  initialActiveTheme,
 }: {
   children: ReactNode;
   initialThemes?: Theme[];
+  initialActiveTheme?: Theme;
 }) {
-  // Synchronous Instant Cache Hydration (0ms - No DB blocking)
-  const [themes, setThemesState] = useState<Theme[]>(() => {
-    if (typeof window !== "undefined") {
-      const cached = getCachedThemes();
-      return cached.themes.length > 0 ? cached.themes : initialThemes;
-    }
-    return initialThemes;
-  });
+  const activeDefault =
+    initialActiveTheme || initialThemes.find((t) => t.is_active) || defaultThemes[0];
 
-  const [currentTheme, setCurrentThemeState] = useState<Theme>(() => {
-    if (typeof window !== "undefined") {
-      return getCachedActiveTheme();
-    }
-    return initialThemes.find((t) => t.is_active) || defaultThemes[0];
-  });
-
+  const [themes, setThemesState] = useState<Theme[]>(initialThemes);
+  const [currentTheme, setCurrentThemeState] = useState<Theme>(activeDefault);
   const [isLoading, setIsLoading] = useState(false);
   const [isCached, setIsCached] = useState(true);
 
   // Apply theme tokens to DOM immediately
   useEffect(() => {
     applyThemeTokensToDOM(currentTheme);
+    setCachedActiveTheme(currentTheme);
   }, [currentTheme]);
 
   // Stale-While-Revalidate Background Fetch
